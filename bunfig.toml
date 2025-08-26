@@ -1,0 +1,10 @@
+# Bun configuration for lit-site
+
+[install]
+# Use exact versions for better reproducibility
+exact = true
+# Cache directory configuration
+cache = { dir = ".bun-cache" }
+
+# Optional: Configure registry
+registry = "https://registry.npmjs.org"

@@ -1,0 +1,29 @@
+{
+  "name": "lit-site",
+  "version": "0.0.1",
+  "description": "A modern website built with TypeScript and Vite",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "bun run build:ts && vite build",
+    "build:ts": "tsc",
+    "preview": "vite preview",
+    "serve": "vite serve",
+    "watch-content": "bun run src/scripts/build-content.ts --watch"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "serve": "^14.2.4",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@qdi/design-system": "file://../../repos/common-ui/dist/libs/design-system",
+    "js-yaml": "^4.1.0",
+    "lit": "^3.3.0",
+    "marked": "^16.2.0"
+  }
+}
