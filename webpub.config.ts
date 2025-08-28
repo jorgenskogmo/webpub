@@ -1,15 +1,10 @@
-type TWebpubConfig = {
-  name: string;
-  version: string;
-  content_directory: string;
-  templates_directory: string;
-  output_directory: string;
-};
+import type { WebpubConfig } from "./src/webpub";
 
-export const config: TWebpubConfig = {
+export const config: WebpubConfig = {
   name: "webpub demo",
   version: "0.0.1",
   content_directory: "content",
   templates_directory: "templates",
   output_directory: "dist",
+  image_widths: [150, 300, 600, 1200],
 };

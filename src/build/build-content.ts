@@ -3,8 +3,35 @@ import { join, relative, dirname, sep } from "path";
 import { glob } from "glob";
 import yaml from "js-yaml";
 
-import type { Page } from "../webpub.ts";
-import { config } from "../../webpub.config.ts";
+import type { Page } from "../webpub";
+import { config } from "../../webpub.config";
+
+export function build_content(): void {
+  // Find all index.md files in the content directory
+  const indexFiles = glob.sync(join(config.content_directory, "**/index.md"));
+  // console.log(indexFiles);
+
+  const structure: Record<string, Page> = {};
+
+  for (const file of indexFiles) {
+    const rel = relative(config.content_directory, file);
+    const pathArr = dirname(rel).split(sep).filter(Boolean);
+    const url = `/${pathArr.join("/")}/`;
+
+    console.log(rel, pathArr, url);
+    const content = readFileSync(file, "utf8");
+    const { frontmatter, markdown } = extractFrontmatter(content);
+
+    structure[url] = { meta: frontmatter, content: markdown };
+  }
+
+  const sortedStructure = sortKeys(structure);
+  const output_file = `${config.content_directory}/content.json`;
+  writeFileSync(output_file, JSON.stringify(sortedStructure, null, 2));
+  console.log(`Content structure written to ${output_file}`);
+}
+
+// utils --
 
 function extractFrontmatter(content: string) {
   const match = content.match(/^---\n([\s\S]*?)\n---\n?/);
@@ -36,29 +63,4 @@ function sortKeys(obj: Record<string, any>): Record<string, any> {
   return sorted;
 }
 
-function buildStructure(contentDir: string): any {
-  // Find all index.md and other files
-  const indexFiles = glob.sync(join(contentDir, "**/index.md"));
-  // console.log(indexFiles);
-
-  const structure: Record<string, Page> = {};
-
-  for (const file of indexFiles) {
-    const rel = relative(contentDir, file);
-    const pathArr = dirname(rel).split(sep).filter(Boolean);
-    const url = `/${pathArr.join("/")}/`;
-
-    console.log(rel, pathArr, url);
-    const content = readFileSync(file, "utf8");
-    const { frontmatter, markdown } = extractFrontmatter(content);
-
-    structure[url] = { meta: frontmatter, content: markdown };
-  }
-
-  return sortKeys(structure);
-}
-
-const structure = buildStructure(config.content_directory);
-const output_file = `${config.content_directory}/content.json`;
-writeFileSync(output_file, JSON.stringify(structure, null, 2));
-console.log(`Content structure written to ${output_file}`);
+build_content();

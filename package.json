@@ -7,15 +7,18 @@
     "dev": "vite",
     "build": "bun run build:ts && vite build",
     "build:ts": "tsc",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "serve": "bun run src/serve.ts"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.21",
     "@types/js-yaml": "^4.0.9",
-    "sharp": "^0.34.3",
-    "typescript": "^5.0.0",
-    "marked": "^16.2.0",
+    "bun-types": "1.2.21",
     "glob": "11.0.3",
     "js-yaml": "^4.1.0",
+    "marked": "^16.2.0",
+    "sharp": "^0.34.3",
+    "typescript": "^5.0.0",
     "vite": "^7.1.3"
   },
   "keywords": [],

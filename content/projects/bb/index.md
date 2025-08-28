@@ -10,6 +10,17 @@ summary: "A sample markdown file for the BB project, demonstrating frontmatter, 
 
 Welcome to the **BB Project** example markdown file. This file demonstrates:
 
+Some lit-components:
+
+<qdi-button variant="primary" onclick="alert('alo!')">say alo</qdi-button>
+<qdi-button variant="primary" id="mybtn">say alo alo</qdi-button>
+
+<script>
+  document.querySelector("#mybtn").addEventListener("click", () => {
+    alert("alo alo");
+  })
+</script>
+
 - Frontmatter
 - Headings
 - Typography
