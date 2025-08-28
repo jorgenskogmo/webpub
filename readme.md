@@ -29,6 +29,6 @@ When a change is detected in any of the directories defined in webdev.config.ts,
 
 All these can be configured, @see: config
 
-./content : directories with index.md files (@see: content-files)
-./templates: html layouts
-./dist: the ready-to-be-deployed static website
+- ./content : directories with index.md files (@see: content-files)
+- ./templates: html layouts
+- ./dist: the ready-to-be-deployed static website
