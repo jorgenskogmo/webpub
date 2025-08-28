@@ -1,0 +1,34 @@
+{
+  "/projects/aa/": {
+    "content": "\n# AA Project Example\n\nWelcome to the **AA Project** example markdown file. This file demonstrates:\n\n<qdi-button variant=\"primary\" onclick=\"alert('alo!')\">say alo</qdi-button>\n<qdi-button variant=\"primary\" id=\"mybtn\">say alo alo</qdi-button>\n\n<script>\n  document.querySelector(\"#mybtn\").addEventListener(\"click\", () => {\n    alert(\"alo alo\");\n  })\n</script>\n\n- Frontmatter\n- Headings\n- Typography\n- Images\n- Tables\n- Lists\n\n## Typography\n\n### Headings\n\n# Heading 1\n\n## Heading 2\n\n### Heading 3\n\n#### Heading 4\n\n##### Heading 5\n\n###### Heading 6\n\n### Emphasis\n\n*Italic text*\n\n**Bold text**\n\n***Bold and italic text***\n\n> This is a blockquote. It can be used to highlight important information.\n\n### Lists\n\n- Unordered list item 1\n- Unordered list item 2\n  - Nested item\n\n1. Ordered list item 1\n2. Ordered list item 2\n   1. Nested ordered item\n\n## Images\n\n![Sample Image](https://placehold.co/400x200.png?text=AA+Project+Image)\n\n## Tables\n\n| Feature      | Supported | Notes                       |\n|-------------|-----------|-----------------------------|\n| Frontmatter  | Yes       | YAML at the top of the file |\n| Headings     | Yes       | All levels                  |\n| Images       | Yes       | Markdown and HTML           |\n| Tables       | Yes       | Standard markdown tables    |\n| Lists        | Yes       | Ordered and unordered       |\n\n## Code\n\n```js\n// Example JavaScript code block\nconsole.log('Hello, AA Project!');\n```\n\n## Links\n\n[Visit Eleventy](https://www.11ty.dev/)\n\n---\n\n*End of example markdown file.*\n",
+    "meta": {
+      "author": "Jane Doe",
+      "date": "2025-08-23",
+      "summary": "A sample markdown file demonstrating frontmatter, typography, images, and tables for static site generators like Eleventy.",
+      "tags": [
+        "typography",
+        "images",
+        "tables",
+        "markdown",
+        "example"
+      ],
+      "title": "AA Project Example"
+    }
+  },
+  "/projects/bb/": {
+    "content": "\n# BB Project Example\n\nWelcome to the **BB Project** example markdown file. This file demonstrates:\n\n- Frontmatter\n- Headings\n- Typography\n- Images\n- Tables\n- Lists\n\n## Typography\n\n### Headings\n\n# Heading 1\n\n## Heading 2\n\n### Heading 3\n\n#### Heading 4\n\n##### Heading 5\n\n###### Heading 6\n\n### Emphasis\n\n*Italic text*\n\n**Bold text**\n\n***Bold and italic text***\n\n> This is a blockquote for the BB project.\n\n### Lists\n\n- Unordered list item A\n- Unordered list item B\n  - Nested item\n\n1. Ordered list item A\n2. Ordered list item B\n   1. Nested ordered item\n\n## Images\n\n![BB Project Image](https://placehold.co/400x200.png?text=BB+Project+Image)\n\n## Tables\n\n| Feature      | Supported | Notes                       |\n|-------------|-----------|-----------------------------|\n| Frontmatter  | Yes       | YAML at the top of the file |\n| Headings     | Yes       | All levels                  |\n| Images       | Yes       | Markdown and HTML           |\n| Tables       | Yes       | Standard markdown tables    |\n| Lists        | Yes       | Ordered and unordered       |\n\n## Code\n\n```js\n// BB Project JavaScript example\nconsole.log('Hello, BB Project!');\n```\n\n## Links\n\n[Visit Eleventy](https://www.11ty.dev/)\n\n---\n\n*End of BB project example markdown file.*\n",
+    "meta": {
+      "author": "John Smith",
+      "date": "2025-08-23",
+      "summary": "A sample markdown file for the BB project, demonstrating frontmatter, headings, images, tables, and code blocks.",
+      "tags": [
+        "typography",
+        "images",
+        "tables",
+        "markdown",
+        "example"
+      ],
+      "title": "BB Project Example"
+    }
+  }
+}

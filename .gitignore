@@ -16,6 +16,7 @@ dist/
 .idea/
 *.swp
 *.swo
+.bun-cache
 
 # OS generated files
 .DS_Store
