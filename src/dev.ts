@@ -9,6 +9,7 @@ import { build_pages } from "./build/build-pages";
 
 let buildTimeout: NodeJS.Timeout | null = null;
 let buildInProgress = false;
+let buildCompletedAt = Date.now();
 const sockets: Set<ServerWebSocket<unknown>> = new Set();
 
 const LIVE_RELOAD_SNIPPET = `
@@ -22,7 +23,7 @@ const LIVE_RELOAD_SNIPPET = `
 </script>
 `;
 
-async function runBuild(): Promise<void> {
+export async function runBuild(): Promise<void> {
   if (buildInProgress) {
     console.log("Build already running, skipping...");
     return;
@@ -30,13 +31,15 @@ async function runBuild(): Promise<void> {
   buildInProgress = true;
 
   try {
-    console.log("Change detected. Running build_content...");
+    console.time("Rebuild");
+    console.log("# Running build_content");
     await build_content();
 
-    console.log("Running build_pages...");
+    console.log("\n# Running build_pages");
     await build_pages();
 
-    console.log("Build complete. Reloading clients...");
+    console.timeEnd("Rebuild");
+    console.log("\n# Build complete. Reloading clients...\n");
     for (const ws of sockets) {
       try {
         ws.send("reload");
@@ -45,9 +48,10 @@ async function runBuild(): Promise<void> {
       }
     }
   } catch (err) {
-    console.error("Build failed:", err);
+    console.error("# **Build failed** :", err);
   } finally {
     buildInProgress = false;
+    buildCompletedAt = Date.now();
   }
 }
 
@@ -60,8 +64,15 @@ export function startWatcher(): void {
   const dirs = [config.content_directory, config.templates_directory];
   for (const dir of dirs) {
     watch(dir, { recursive: true }, (eventType, filename) => {
-      console.log(`[${eventType}] ${filename ?? ""}`);
-      scheduleBuild();
+      const lapse = Date.now() - buildCompletedAt;
+      if (lapse < 50 || filename?.includes("DS_Store")) {
+        console.log(
+          `% ${eventType}: ${filename ?? ""} -> ignored (time: ${lapse})`
+        );
+      } else {
+        console.log(`% ${eventType}: ${filename ?? ""} -> rebuild`);
+        scheduleBuild();
+      }
     });
     console.log(`Watching ${dir} for changes...`);
   }
@@ -154,3 +165,5 @@ function openBrowser(url: string): void {
 
   spawn(cmd, args, { stdio: "ignore", detached: true }).unref();
 }
+
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

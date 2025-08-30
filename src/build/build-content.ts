@@ -1,4 +1,4 @@
-import { writeFileSync, readFileSync } from "fs";
+import { readFile, writeFile } from "node:fs/promises";
 import { join, relative, dirname, sep } from "path";
 import { glob } from "glob";
 import yaml from "js-yaml";
@@ -6,7 +6,9 @@ import yaml from "js-yaml";
 import type { Page } from "../webpub";
 import { config } from "../../webpub.config";
 
-export function build_content(): void {
+export async function build_content(): Promise<void> {
+  console.log("+ Building content");
+
   // Find all index.md files in the content directory
   const indexFiles = glob.sync(join(config.content_directory, "**/index.md"));
   // console.log(indexFiles);
@@ -18,8 +20,8 @@ export function build_content(): void {
     const pathArr = dirname(rel).split(sep).filter(Boolean);
     const url = `/${pathArr.join("/")}/`;
 
-    console.log(rel, pathArr, url);
-    const content = readFileSync(file, "utf8");
+    console.log("- indexing", rel);
+    const content = await readFile(file, "utf8");
     const { frontmatter, markdown } = extractFrontmatter(content);
 
     structure[url] = { meta: frontmatter, content: markdown };
@@ -27,8 +29,11 @@ export function build_content(): void {
 
   const sortedStructure = sortKeys(structure);
   const output_file = `${config.content_directory}/content.json`;
-  writeFileSync(output_file, JSON.stringify(sortedStructure, null, 2));
-  console.log(`Content structure written to ${output_file}`);
+
+  await writeFile(output_file, JSON.stringify(sortedStructure, null, 2));
+
+  // writeFileSync(output_file, JSON.stringify(sortedStructure, null, 2));
+  console.log(`Done. Content structure written to ${output_file}`);
 }
 
 // utils --
@@ -62,5 +67,3 @@ function sortKeys(obj: Record<string, any>): Record<string, any> {
   if (obj["_data"]) sorted["_data"] = obj["_data"];
   return sorted;
 }
-
-build_content();

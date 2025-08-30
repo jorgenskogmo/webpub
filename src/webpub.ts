@@ -1,4 +1,5 @@
-import { startDevServer, startWatcher } from "./dev";
+import { runBuild, startDevServer, startWatcher } from "./dev";
+import { cleanDestinationDirectory } from "./utils";
 
 export type WebpubConfig = {
   name: string;
@@ -26,6 +27,7 @@ export type Page = {
 };
 
 // main:
-
+cleanDestinationDirectory(); // optional?
 startWatcher();
 startDevServer();
+runBuild();
