@@ -10,9 +10,8 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
   marked.setOptions(config.marked_options);
 
   // dynamically import the generated content.json
-  const content = (
-    await import(join("../", config.content_directory, "content.json"))
-  ).default as Record<string, Page>;
+  const content = (await import(join(config.content_directory, "content.json")))
+    .default as Record<string, Page>;
 
   const buildPagesMessage = `Rebuilt all pages`;
   console.time(buildPagesMessage);
