@@ -1,6 +1,6 @@
 import { marked } from "marked";
 import { join } from "node:path";
-import { writeFileSync, mkdirSync } from "fs";
+import { writeFileSync, mkdirSync, existsSync, readFileSync } from "fs";
 
 import { copyDirSync } from "./utils.js";
 import { type Page, type WebpubConfig, WebpubHooks } from "./webpub.js";
@@ -10,8 +10,21 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
   marked.setOptions(config.marked_options);
 
   // dynamically import the generated content.json
-  const content = (await import(join(config.content_directory, "content.json")))
-    .default as Record<string, Page>;
+  // const content = (await import(join(config.content_directory, "content.json")))
+  //   .default as Record<string, Page>;
+
+  let content: Record<string, Page> = {};
+  const contentJsonPath = join(config.content_directory, "content.json");
+  if (existsSync(contentJsonPath)) {
+    const contentJson = readFileSync(contentJsonPath, "utf-8");
+    // Safely parse to JSON
+    try {
+      content = JSON.parse(contentJson) as Record<string, Page>;
+    } catch (e) {
+      console.error("Failed to parse content.json:", e);
+      process.exit(3);
+    }
+  }
 
   const buildPagesMessage = `Rebuilt all pages`;
   console.time(buildPagesMessage);

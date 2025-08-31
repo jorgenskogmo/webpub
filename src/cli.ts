@@ -20,34 +20,34 @@ console.log("projectRoot:", projectRoot);
 console.log("configPath:", configPath);
 
 // Check if config file exists before reading
-let configContent = "{}";
+let config: WebpubConfig;
 if (fs.existsSync(configPath)) {
-  configContent = fs.readFileSync(configPath, "utf-8");
+  const configContent = fs.readFileSync(configPath, "utf-8");
+  // Safely parse to JSON
+  try {
+    config = JSON.parse(configContent);
+    config.theme = theme;
+    config.plugins = [srcsetPlugin];
+    config.devserver_port = config.devserver_port ?? 3001;
+    config.content_directory = path.resolve(
+      process.cwd(),
+      config.content_directory
+    );
+    config.templates_directory = path.resolve(
+      process.cwd(),
+      config.templates_directory
+    );
+    config.output_directory = path.resolve(
+      process.cwd(),
+      config.output_directory
+    );
+  } catch (e) {
+    console.error("Failed to parse config file as JSON:", e);
+    process.exit(2);
+  }
 } else {
   console.error("Failed to read config file:", configPath);
-}
-
-// Safely parse to JSON
-let config: WebpubConfig;
-try {
-  config = JSON.parse(configContent);
-  config.theme = theme;
-  config.plugins = [srcsetPlugin];
-  config.devserver_port = config.devserver_port ?? 3001;
-  config.content_directory = path.resolve(
-    process.cwd(),
-    config.content_directory
-  );
-  config.templates_directory = path.resolve(
-    process.cwd(),
-    config.templates_directory
-  );
-  config.output_directory = path.resolve(
-    process.cwd(),
-    config.output_directory
-  );
-} catch (e) {
-  console.error("Failed to parse config file as JSON:", e);
+  process.exit(1);
 }
 
 // const defaultConfig: WebpubConfig = {
