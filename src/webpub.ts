@@ -4,6 +4,7 @@ export type WebpubConfig = {
   name: string;
   version: string;
   content_directory: string;
+  template: string;
   templates_directory: string;
   output_directory: string;
   image_widths: number[];
@@ -12,6 +13,7 @@ export type WebpubConfig = {
   marked_options: MarkedOptions;
   open_browser: true;
   devserver_port: number;
+  devserver_enabled: boolean;
 };
 
 // todo: consider adding pre-, at- and post- hooks to both Page and Content loops

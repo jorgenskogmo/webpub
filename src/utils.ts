@@ -14,7 +14,7 @@ import type { WebpubConfig } from "./webpub.js";
 export function cleanDestinationDirectory(config: WebpubConfig) {
   rmSync(config.output_directory, { recursive: true, force: true });
   mkdirSync(config.output_directory, { recursive: true });
-  console.log("Output directory cleaned");
+  console.log("# Output directory cleaned");
 }
 
 // recursively copies a directory
