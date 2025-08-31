@@ -3,7 +3,7 @@
   "version": "0.0.4",
   "description": "A modern website built with TypeScript and Vite",
   "type": "module",
-  "types": "src/webpub.d.ts",
+  "types": "src/webpub.d.cts",
   "bin": {
     "webpub": "src/cli.cjs"
   },

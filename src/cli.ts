@@ -10,8 +10,8 @@ import type { WebpubConfig } from "./webpub.js";
 // Get the root of the consuming project
 const projectRoot = process.cwd();
 
-// Build the path to webpub.config.ts
-const configPath = path.join(projectRoot, "webpub.config.ts");
+// Build the path to webpub.config.json
+const configPath = path.join(projectRoot, "webpub.config.json");
 
 console.log("projectRoot:", projectRoot);
 console.log("configPath:", configPath);
