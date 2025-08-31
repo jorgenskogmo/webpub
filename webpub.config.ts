@@ -7,7 +7,7 @@ export const config: WebpubConfig = {
   name: "webpub demo",
   version: "0.0.1",
   content_directory: "content",
-  templates_directory: "templates",
+  templates_directory: "templates/themes/default",
   output_directory: "site",
   image_widths: [150, 300, 600, 1200],
   theme,

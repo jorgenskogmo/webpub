@@ -3,22 +3,25 @@
   "version": "0.0.1",
   "description": "A modern website built with TypeScript and Vite",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/webpub.js",
+  "types": "src/webpub.d.ts",
   "bin": {
     "webpub": "src/cli.js"
   },
-  "files": ["src"],
+  "files": [
+    "src/"
+  ],
   "exports": {
     ".": {
-      "import": "./src/index.js",
-      "types": "./src/index.d.ts"
+      "import": "./src/webpub.js",
+      "types": "./src/webpub.d.ts"
     }
   },
   "scripts": {
-    "dev": "bun run src/webpub.ts",
-    "build": "tsc -p tsconfig.build.json",
-    "prepublishOnly": "npm run build"
+    "dev": "bun run src/cli.ts",
+    "build": "tsup",
+    "prepublishOnly": "npm run build",
+    "pack:dist": "npm run build && cd dist && npm pack"
   },
   "devDependencies": {
     "@types/bun": "^1.2.21",
@@ -27,6 +30,7 @@
     "js-yaml": "^4.1.0",
     "marked": "^16.2.0",
     "sharp": "^0.34.3",
+    "tsup": "^8.5.0",
     "typescript": "5.9.2"
   },
   "keywords": [],

@@ -11,7 +11,7 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
 
   // dynamically import the generated content.json
   const content = (
-    await import(`../../${config.content_directory}/content.json`)
+    await import(join("../", config.content_directory, "content.json"))
   ).default as Record<string, Page>;
 
   const buildPagesMessage = `Rebuilt all pages`;
@@ -50,7 +50,7 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
   const copyAssetsMessage = `Copied assets from ${config.content_directory}/assets to ${config.output_directory}/assets`;
   console.time(copyAssetsMessage);
   copyDirSync(
-    join(config.content_directory, "assets"),
+    join(config.templates_directory, "assets"),
     join(config.output_directory, "assets")
   );
   console.timeEnd(copyAssetsMessage);
