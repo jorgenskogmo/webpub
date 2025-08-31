@@ -1,6 +1,6 @@
 {
   "name": "webdev",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A modern website built with TypeScript and Vite",
   "type": "module",
   "types": "src/webpub.d.cts",
@@ -16,7 +16,7 @@
     "lib:build": "tsup",
     "lib:pack": "npm run lib:build && cd dist && npm pack",
     "lib:publish": "npm run lib:build && cd dist && npm publish --access public"
-  },  
+  },
   "devDependencies": {
     "@types/bun": "^1.2.21",
     "@types/js-yaml": "^4.0.9",
