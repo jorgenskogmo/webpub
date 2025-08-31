@@ -1,6 +1,8 @@
 import { watch } from "fs";
 import { join } from "path";
-import { ServerWebSocket } from "bun";
+import { createServer } from "http";
+import { readFile, stat } from "fs/promises";
+import { WebSocketServer, WebSocket } from "ws";
 
 import type { WebpubConfig } from "./webpub.js";
 import { build_content } from "./build-content.js";
@@ -11,7 +13,7 @@ let config: WebpubConfig;
 let buildTimeout: NodeJS.Timeout | null = null;
 let buildInProgress = false;
 let buildCompletedAt = Date.now();
-const sockets: Set<ServerWebSocket<unknown>> = new Set();
+const sockets: Set<WebSocket> = new Set();
 
 const LIVE_RELOAD_SNIPPET = `
 <script>
@@ -79,27 +81,81 @@ export function startWatcher(): void {
 }
 
 export function startDevServer(): void {
-  const server = Bun.serve({
-    port: config.devserver_port,
-    fetch: handleRequest,
-    websocket: {
-      open(ws: ServerWebSocket<unknown>) {
-        sockets.add(ws);
-      },
-      close(ws: ServerWebSocket<unknown>) {
-        sockets.delete(ws);
-      },
-      message(_ws: ServerWebSocket<unknown>, _msg: string | Buffer) {
-        // no-op: we don’t handle client messages
-      },
-    },
+  const server = createServer(async (req, res) => {
+    const url = new URL(req.url ?? "/", `http://${req.headers.host}`);
+    if (url.pathname === "/livereload") {
+      // WebSocket upgrade is handled separately by ws
+      res.writeHead(426, { "Content-Type": "text/plain" });
+      res.end("Upgrade required");
+      return;
+    }
+
+    const path = join(
+      config.output_directory,
+      decodeURIComponent(url.pathname)
+    );
+
+    try {
+      let filePath = path;
+      let stats: any;
+
+      try {
+        stats = await stat(filePath);
+      } catch {
+        // try index.html
+        filePath = join(path, "index.html");
+        stats = await stat(filePath);
+      }
+
+      if (stats.isFile()) {
+        let content = await readFile(filePath);
+
+        if (filePath.endsWith(".html")) {
+          let html = content.toString("utf8");
+          html = injectReloadSnippet(html);
+          res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+          res.end(html);
+          return;
+        }
+
+        // generic file
+        res.writeHead(200);
+        res.end(content);
+        return;
+      }
+    } catch {
+      res.writeHead(404);
+      res.end("Not Found");
+      return;
+    }
   });
 
-  console.log(`Dev server running at http://localhost:${server.port}`);
+  // attach websocket server
+  const wss = new WebSocketServer({ noServer: true });
+  wss.on("connection", (ws) => {
+    sockets.add(ws);
+    ws.on("close", () => sockets.delete(ws));
+  });
 
-  if (config.open_browser) {
-    openBrowser(`http://localhost:${server.port}`);
-  }
+  server.on("upgrade", (req, socket, head) => {
+    const url = new URL(req.url ?? "/", `http://${req.headers.host}`);
+    if (url.pathname === "/livereload") {
+      wss.handleUpgrade(req, socket, head, (ws) => {
+        wss.emit("connection", ws, req);
+      });
+    } else {
+      socket.destroy();
+    }
+  });
+
+  server.listen(config.devserver_port, () => {
+    console.log(
+      `Dev server running at http://localhost:${config.devserver_port}`
+    );
+    if (config.open_browser) {
+      openBrowser(`http://localhost:${config.devserver_port}`);
+    }
+  });
 }
 
 //
@@ -114,45 +170,4 @@ function injectReloadSnippet(html: string): string {
     return html.replace("</body>", `${LIVE_RELOAD_SNIPPET}</body>`);
   }
   return html + LIVE_RELOAD_SNIPPET;
-}
-
-async function handleRequest(
-  req: Request,
-  server: Bun.Server
-): Promise<Response | undefined> {
-  const url = new URL(req.url);
-
-  if (url.pathname === "/livereload") {
-    const success = server.upgrade(req, { data: {} });
-    if (!success) return new Response("Upgrade failed", { status: 400 });
-    return;
-  }
-
-  const path = join(config.output_directory, decodeURIComponent(url.pathname));
-  try {
-    const file = Bun.file(path);
-    if (await file.exists()) {
-      if (path.endsWith(".html")) {
-        let html = await file.text();
-        html = injectReloadSnippet(html);
-        return new Response(html, {
-          headers: { "Content-Type": "text/html; charset=utf-8" },
-        });
-      }
-      return new Response(file);
-    }
-
-    const indexFile = Bun.file(join(path, "index.html"));
-    if (await indexFile.exists()) {
-      let html = await indexFile.text();
-      html = injectReloadSnippet(html);
-      return new Response(html, {
-        headers: { "Content-Type": "text/html; charset=utf-8" },
-      });
-    }
-
-    return new Response("Not Found", { status: 404 });
-  } catch {
-    return new Response("Not Found", { status: 404 });
-  }
 }
