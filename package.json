@@ -1,22 +1,15 @@
 {
   "name": "webdev",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A modern website built with TypeScript and Vite",
   "type": "module",
-  "main": "src/webpub.js",
   "types": "src/webpub.d.ts",
   "bin": {
-    "webpub": "src/cli.js"
+    "webpub": "src/cli.cjs"
   },
   "files": [
     "src/"
   ],
-  "exports": {
-    ".": {
-      "import": "./src/webpub.js",
-      "types": "./src/webpub.d.ts"
-    }
-  },
   "scripts": {
     "dev": "bun run src/cli.ts",
     "build": "tsup",
@@ -29,7 +22,6 @@
     "glob": "11.0.3",
     "js-yaml": "^4.1.0",
     "marked": "^16.2.0",
-    "sharp": "^0.34.3",
     "tsup": "^8.5.0",
     "typescript": "5.9.2"
   },
@@ -37,6 +29,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "lit": "^3.3.0"
+    "sharp": "^0.34.3"
   }
 }

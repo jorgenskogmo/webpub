@@ -6,8 +6,9 @@ export default defineConfig({
   clean: true,
   dts: true,
   sourcemap: true,
-  format: ["esm"],
+  format: ["cjs"],
   splitting: false,
   minify: false,
+  external: ["node:util", "node:fs", "node:path"],
   onSuccess: "bun scripts/clean-package-json.ts && bun scripts/copy-readme.ts",
 });

@@ -1,8 +1,23 @@
 #!/usr/bin/env node
+import path from "path";
+import fs from "fs";
+
 import { runBuild, startDevServer, startWatcher, setConfig } from "./dev.js";
 import { cleanDestinationDirectory } from "./utils.js";
 
 import type { WebpubConfig } from "./webpub.js";
+
+// Get the root of the consuming project
+const projectRoot = process.cwd();
+
+// Build the path to webpub.config.ts
+const configPath = path.join(projectRoot, "webpub.config.ts");
+
+console.log("projectRoot:", projectRoot);
+console.log("configPath:", configPath);
+
+const config = await import(configPath);
+console.log("config:", config);
 
 import * as theme from "./defaults/templates/themes/default/index.js";
 import * as srcsetPlugin from "./defaults/plugins/srcset/index.js";
