@@ -16,6 +16,20 @@ const configPath = path.join(projectRoot, "webpub.config.json");
 console.log("projectRoot:", projectRoot);
 console.log("configPath:", configPath);
 
+// Check if config file exists before reading
+let configContent = "{}";
+if (fs.existsSync(configPath)) {
+  configContent = fs.readFileSync(configPath, "utf-8");
+}
+
+// Safely parse to JSON
+let configJson: WebpubConfig;
+try {
+  configJson = JSON.parse(configContent);
+} catch (e) {
+  console.error("Failed to parse config file as JSON:", e);
+}
+
 import * as theme from "./defaults/templates/themes/default/index.js";
 import * as srcsetPlugin from "./defaults/plugins/srcset/index.js";
 
@@ -40,8 +54,7 @@ console.log("Webpub CLI running…");
 
 async function main() {
   console.log("main");
-  const config = await import(configPath);
-  console.log("config:", config);
+  console.log("configContent:", configContent);
 
   setConfig(defaultConfig);
   cleanDestinationDirectory(defaultConfig); // optional?
