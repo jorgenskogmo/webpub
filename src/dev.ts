@@ -80,7 +80,7 @@ export function startWatcher(): void {
 
 export function startDevServer(): void {
   const server = Bun.serve({
-    port: 3000,
+    port: config.devserver_port,
     fetch: handleRequest,
     websocket: {
       open(ws: ServerWebSocket<unknown>) {

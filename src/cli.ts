@@ -7,6 +7,9 @@ import { cleanDestinationDirectory } from "./utils.js";
 
 import type { WebpubConfig } from "./webpub.js";
 
+import * as theme from "./defaults/templates/themes/default/index.js";
+import * as srcsetPlugin from "./defaults/plugins/srcset/index.js";
+
 // Get the root of the consuming project
 const projectRoot = process.cwd();
 
@@ -20,44 +23,56 @@ console.log("configPath:", configPath);
 let configContent = "{}";
 if (fs.existsSync(configPath)) {
   configContent = fs.readFileSync(configPath, "utf-8");
+} else {
+  console.error("Failed to read config file:", configPath);
 }
 
 // Safely parse to JSON
-let configJson: WebpubConfig;
+let config: WebpubConfig;
 try {
-  configJson = JSON.parse(configContent);
+  config = JSON.parse(configContent);
+  config.theme = theme;
+  config.plugins = [srcsetPlugin];
+  config.devserver_port = config.devserver_port ?? 3001;
+  config.content_directory = path.resolve(
+    process.cwd(),
+    config.content_directory
+  );
+  config.templates_directory = path.resolve(
+    process.cwd(),
+    config.templates_directory
+  );
+  config.output_directory = path.resolve(
+    process.cwd(),
+    config.output_directory
+  );
 } catch (e) {
   console.error("Failed to parse config file as JSON:", e);
 }
 
-import * as theme from "./defaults/templates/themes/default/index.js";
-import * as srcsetPlugin from "./defaults/plugins/srcset/index.js";
-
-const defaultConfig: WebpubConfig = {
-  name: "webpub default",
-  version: "0.0.1",
-  content_directory: "content",
-  templates_directory: "templates/themes/default",
-  output_directory: "site",
-  image_widths: [150, 300, 600, 1200],
-  theme,
-  plugins: [srcsetPlugin],
-  marked_options: { gfm: true, breaks: true },
-  open_browser: true,
-  devserver_port: 3000,
-};
-
-console.log("Webpub CLI running…");
+// const defaultConfig: WebpubConfig = {
+//   name: "webpub default",
+//   version: "0.0.1",
+//   content_directory: "content",
+//   templates_directory: "templates/themes/default",
+//   output_directory: "site",
+//   image_widths: [150, 300, 600, 1200],
+//   theme,
+//   plugins: [srcsetPlugin],
+//   marked_options: { gfm: true, breaks: true },
+//   open_browser: true,
+//   devserver_port: 3000,
+// };
 
 // todo: add config flags?
 // todo: find webpub.config.ts
 
 async function main() {
   console.log("main");
-  console.log("configContent:", configContent);
+  console.log("config:", config);
 
-  setConfig(defaultConfig);
-  cleanDestinationDirectory(defaultConfig); // optional?
+  setConfig(config);
+  cleanDestinationDirectory(config); // optional?
   startWatcher();
   startDevServer();
   runBuild();
