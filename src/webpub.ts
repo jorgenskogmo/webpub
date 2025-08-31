@@ -1,5 +1,4 @@
-import { runBuild, startDevServer, startWatcher } from "./dev";
-import { cleanDestinationDirectory } from "./utils";
+import { MarkedOptions } from "marked";
 
 export type WebpubConfig = {
   name: string;
@@ -8,9 +7,31 @@ export type WebpubConfig = {
   templates_directory: string;
   output_directory: string;
   image_widths: number[];
+  theme: Template;
+  plugins: Plugin[];
+  marked_options: MarkedOptions;
+  open_browser: true;
+  devserver_port: number;
 };
 
-export type TemplateFunction = (page: Page) => string;
+// todo: consider adding pre-, at- and post- hooks to both Page and Content loops
+export enum WebpubHooks {
+  BUILD_PAGE,
+  BUILD_CONTENT, // not used
+}
+
+export type PluginFunction = (
+  config: WebpubConfig,
+  url: string,
+  html: string
+) => Promise<string>;
+
+export type Plugin = {
+  hook: WebpubHooks;
+  run: PluginFunction;
+};
+
+export type TemplateFunction = (config: WebpubConfig, page: Page) => string;
 
 export type Template = {
   head: TemplateFunction;
@@ -25,9 +46,3 @@ export type Page = {
   };
   content: string;
 };
-
-// main:
-cleanDestinationDirectory(); // optional?
-startWatcher();
-startDevServer();
-runBuild();

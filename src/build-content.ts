@@ -3,10 +3,9 @@ import { join, relative, dirname, sep } from "path";
 import { glob } from "glob";
 import yaml from "js-yaml";
 
-import type { Page } from "../webpub";
-import { config } from "../../webpub.config";
+import type { Page, WebpubConfig } from "./webpub.js";
 
-export async function build_content(): Promise<void> {
+export async function build_content(config: WebpubConfig): Promise<void> {
   console.log("+ Building content");
 
   // Find all index.md files in the content directory

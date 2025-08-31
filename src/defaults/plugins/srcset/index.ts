@@ -3,12 +3,18 @@ import { basename, join } from "node:path";
 
 import sharp from "sharp";
 
-import type { WebpubConfig } from "../../webpub";
+import {
+  type WebpubConfig,
+  type Plugin,
+  WebpubHooks,
+} from "../../../webpub.js";
 
 const PLUGIN_COMPLETE_MESSAGE = `srcset plugin complete`;
 const IMAGE_REGEX_HTML = /<img[^>]+src=["']((?!https?:)[^"']+)["'][^>]*>/g;
 
-export const srcset = async (
+export const hook = WebpubHooks.BUILD_PAGE;
+
+export const run = async (
   config: WebpubConfig,
   url: string,
   html: string
@@ -76,3 +82,5 @@ function extractImgAttrs(imgTag: string): { src?: string; alt?: string } {
 function findEntryByPrefix(prefix: string, arr: string[]): string | undefined {
   return arr.find((entry) => entry.startsWith(prefix));
 }
+
+export default { hook, run } as Plugin;

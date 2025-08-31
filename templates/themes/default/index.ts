@@ -1,7 +1,6 @@
-import { config } from "../webpub.config.ts";
-import type { Page, Template } from "../src/webpub.ts";
+import type { Page, Template, WebpubConfig } from "../../../src/webpub.js";
 
-export const head = (_page: Page) => `<!DOCTYPE html>
+export const head = (config: WebpubConfig, _page: Page) => `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
@@ -11,11 +10,11 @@ export const head = (_page: Page) => `<!DOCTYPE html>
     </head>
   `;
 
-export const foot = (_page: Page) => `
+export const foot = (_config: WebpubConfig, _page: Page) => `
   </body>
 </html>`;
 
-export const main = (page: Page) => `
+export const main = (config: WebpubConfig, page: Page) => `
 <body>
   <main>
     <h1>Default page (${config.name} ${config.version})</h1>
@@ -26,7 +25,7 @@ export const main = (page: Page) => `
   </main>
 `;
 
-export const render = (page: Page) =>
-  `${head(page)} ${main(page)} ${foot(page)}`;
+export const render = (config: WebpubConfig, page: Page) =>
+  `${head(config, page)} ${main(config, page)} ${foot(config, page)}`;
 
 export default { head, main, foot, render } as Template;

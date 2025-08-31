@@ -2,31 +2,17 @@ import { marked } from "marked";
 import { join } from "node:path";
 import { writeFileSync, mkdirSync } from "fs";
 
-import { copyDirSync } from "../utils.ts";
-import { config } from "../../webpub.config.ts";
-import type { Page } from "../webpub.ts";
-import { render } from "../../templates/default.ts"; // todo: dynamically import?
+import { copyDirSync } from "./utils.js";
+import { type Page, type WebpubConfig, WebpubHooks } from "./webpub.js";
 
-// todo: somehow autoregister plugins
-import { srcset } from "../plugins/srcset/index.ts";
+export async function build_pages(config: WebpubConfig): Promise<void> {
+  // todo: discuss,
+  marked.setOptions(config.marked_options);
 
-// todo: discuss,
-// todo: expose in config?
-marked.setOptions({
-  gfm: true,
-  breaks: true,
-});
-
-export async function build_pages(): Promise<void> {
   // dynamically import the generated content.json
   const content = (
     await import(`../../${config.content_directory}/content.json`)
   ).default as Record<string, Page>;
-
-  // // clear output directory
-  // // todo: DONT when in watch-mode
-  // rmSync(config.output_directory, { recursive: true, force: true });
-  // mkdirSync(config.output_directory, { recursive: true });
 
   const buildPagesMessage = `Rebuilt all pages`;
   console.time(buildPagesMessage);
@@ -42,12 +28,18 @@ export async function build_pages(): Promise<void> {
     let html = await marked.parse(page.content);
 
     // process html with plugins
-    html = await srcset(config, url, html);
+    for (const plugin of config.plugins) {
+      if (plugin.hook === WebpubHooks.BUILD_PAGE) {
+        html = await plugin.run(config, url, html);
+      }
+    }
 
-    // todo: determine if the page.meta specifies a template to use
-    // const template = page.meta.template || "default";
-
-    const output = `${render({ meta: page.meta, content: html })}`;
+    // render page with template
+    // todo: determine which theme layout template to use
+    const output = `${config.theme.render(config, {
+      meta: page.meta,
+      content: html,
+    })}`;
     const outputPath = join(dirPath, `index.html`);
     writeFileSync(outputPath, output);
   }

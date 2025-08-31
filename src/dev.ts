@@ -1,12 +1,13 @@
 import { watch } from "fs";
 import { join } from "path";
-import { spawn } from "child_process";
 import { ServerWebSocket } from "bun";
 
-import { config } from "../webpub.config";
-import { build_content } from "./build/build-content";
-import { build_pages } from "./build/build-pages";
+import type { WebpubConfig } from "./webpub.js";
+import { build_content } from "./build-content.js";
+import { build_pages } from "./build-pages.js";
+import { openBrowser } from "./utils.js";
 
+let config: WebpubConfig;
 let buildTimeout: NodeJS.Timeout | null = null;
 let buildInProgress = false;
 let buildCompletedAt = Date.now();
@@ -23,6 +24,10 @@ const LIVE_RELOAD_SNIPPET = `
 </script>
 `;
 
+export function setConfig(_config: WebpubConfig) {
+  config = _config;
+}
+
 export async function runBuild(): Promise<void> {
   if (buildInProgress) {
     console.log("Build already running, skipping...");
@@ -33,10 +38,10 @@ export async function runBuild(): Promise<void> {
   try {
     console.time("Rebuild");
     console.log("# Running build_content");
-    await build_content();
+    await build_content(config);
 
     console.log("\n# Running build_pages");
-    await build_pages();
+    await build_pages(config);
 
     console.timeEnd("Rebuild");
     console.log("\n# Build complete. Reloading clients...\n");
@@ -55,11 +60,6 @@ export async function runBuild(): Promise<void> {
   }
 }
 
-function scheduleBuild(): void {
-  if (buildTimeout) clearTimeout(buildTimeout);
-  buildTimeout = setTimeout(runBuild, 300);
-}
-
 export function startWatcher(): void {
   const dirs = [config.content_directory, config.templates_directory];
   for (const dir of dirs) {
@@ -76,6 +76,37 @@ export function startWatcher(): void {
     });
     console.log(`Watching ${dir} for changes...`);
   }
+}
+
+export function startDevServer(): void {
+  const server = Bun.serve({
+    port: 3000,
+    fetch: handleRequest,
+    websocket: {
+      open(ws: ServerWebSocket<unknown>) {
+        sockets.add(ws);
+      },
+      close(ws: ServerWebSocket<unknown>) {
+        sockets.delete(ws);
+      },
+      message(_ws: ServerWebSocket<unknown>, _msg: string | Buffer) {
+        // no-op: we don’t handle client messages
+      },
+    },
+  });
+
+  console.log(`Dev server running at http://localhost:${server.port}`);
+
+  if (config.open_browser) {
+    openBrowser(`http://localhost:${server.port}`);
+  }
+}
+
+//
+
+function scheduleBuild(): void {
+  if (buildTimeout) clearTimeout(buildTimeout);
+  buildTimeout = setTimeout(runBuild, 300);
 }
 
 function injectReloadSnippet(html: string): string {
@@ -125,45 +156,3 @@ async function handleRequest(
     return new Response("Not Found", { status: 404 });
   }
 }
-
-export function startDevServer(): void {
-  const server = Bun.serve({
-    port: 3000,
-    fetch: handleRequest,
-    websocket: {
-      open(ws: ServerWebSocket<unknown>) {
-        sockets.add(ws);
-      },
-      close(ws: ServerWebSocket<unknown>) {
-        sockets.delete(ws);
-      },
-      message(_ws: ServerWebSocket<unknown>, _msg: string | Buffer) {
-        // no-op: we don’t handle client messages
-      },
-    },
-  });
-
-  console.log(`Dev server running at http://localhost:${server.port}`);
-  openBrowser(`http://localhost:${server.port}`);
-}
-
-function openBrowser(url: string): void {
-  const platform = process.platform;
-  let cmd: string;
-  let args: string[];
-
-  if (platform === "darwin") {
-    cmd = "open";
-    args = [url];
-  } else if (platform === "win32") {
-    cmd = "cmd";
-    args = ["/c", "start", url];
-  } else {
-    cmd = "xdg-open";
-    args = [url];
-  }
-
-  spawn(cmd, args, { stdio: "ignore", detached: true }).unref();
-}
-
-export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
