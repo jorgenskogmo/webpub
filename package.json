@@ -1,6 +1,6 @@
 {
   "name": "webdev",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A modern website built with TypeScript and Vite",
   "type": "module",
   "types": "src/webpub.d.cts",
