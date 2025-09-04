@@ -17,7 +17,8 @@ export async function main() {
 
   const configFile = await import(`${process.cwd()}/webpub.config.ts`);
 
-  console.log("main - configFile:", configFile);
+  config = configFile.default;
+  console.log("main - config:", config);
 
   if (!config) {
     console.error("main - missing configuration");
