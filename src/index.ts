@@ -20,7 +20,7 @@ export async function main() {
   runBuild();
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// main().catch((err) => {
+//   console.error(err);
+//   process.exit(1);
+// });
