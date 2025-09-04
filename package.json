@@ -1,6 +1,6 @@
 {
   "name": "webpub",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "website builder",
   "keywords": [],
   "author": "",
@@ -26,8 +26,12 @@
   "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
-      "plugins/*": ["dist/plugins/*/index.d.ts"],
-      "themes/*": ["dist/themes/*/index.d.ts"]
+      "plugins/*": [
+        "dist/plugins/*/index.d.ts"
+      ],
+      "themes/*": [
+        "dist/themes/*/index.d.ts"
+      ]
     }
   },
   "files": [
