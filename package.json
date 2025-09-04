@@ -14,11 +14,11 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./plugins": {
+    "./plugins/*": {
       "import": "./dist/plugins/*",
       "types": "./dist/plugins/*"
     },
-    "./themes": {
+    "./themes/*": {
       "import": "./dist/themes/*",
       "types": "./dist/themes/*"
     }
