@@ -1,5 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
-import { join, relative, dirname, sep } from "path";
+import { join, relative, dirname, sep } from "node:path";
 import { glob } from "glob";
 import yaml from "js-yaml";
 

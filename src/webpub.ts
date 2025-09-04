@@ -1,4 +1,4 @@
-import { MarkedOptions } from "marked";
+import type { MarkedOptions } from "marked";
 
 export type WebpubConfig = {
   name: string;

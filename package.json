@@ -1,20 +1,33 @@
 {
-  "name": "webdev",
-  "version": "0.0.10",
-  "description": "A modern website built with TypeScript and Vite",
+  "name": "webpub",
+  "version": "0.1.1",
+  "description": "website builder",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "type": "module",
-  "types": "src/webpub.d.cts",
   "bin": {
-    "webpub": "src/cli.cjs"
+    "webpub": "./dist/index.js"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
   "files": [
-    "src/"
+    "dist"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-    "dev": "bun run src/cli.ts",
-    "build": "tsup",
-    "prepublishOnly": "npm run build",
-    "pack:dist": "npm run build && cd dist && npm pack"
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "sharp": "^0.34.3"
   },
   "devDependencies": {
     "@types/bun": "^1.2.21",
@@ -23,14 +36,10 @@
     "glob": "11.0.3",
     "js-yaml": "^4.1.0",
     "marked": "^16.2.0",
-    "tsup": "^8.5.0",
-    "typescript": "5.9.2",
+    "typescript": "^5.9.2",
     "ws": "^8.18.3"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
+  "peerDependencies": {
     "sharp": "^0.34.3"
   }
 }
