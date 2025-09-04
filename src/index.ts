@@ -1,17 +1,28 @@
 import { runBuild, startDevServer, startWatcher, setConfig } from "./dev.js";
 import { cleanDestinationDirectory } from "./utils.js";
-import { loadConfig } from "./configparser.js";
+// import { loadConfig } from "./configparser.js";
 import type { WebpubConfig } from "./types.js";
 
 export * from "./types.js";
 
+let config: WebpubConfig | undefined = undefined;
+
 export async function defineConfig(conf: WebpubConfig) {
   console.log("defineConfig called with", conf);
+  config = conf;
 }
 
 export async function main() {
-  const config = await loadConfig();
-  console.log("main called, loaded config:", config);
+  // const config = await loadConfig();
+
+  const configFile = await import(`${process.cwd()}/webpub.config.ts`);
+
+  console.log("main - configFile:", configFile);
+
+  if (!config) {
+    console.error("main - missing configuration");
+    return;
+  }
 
   setConfig(config);
   cleanDestinationDirectory(config);

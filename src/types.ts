@@ -4,16 +4,21 @@ export type WebpubConfig = {
   name: string;
   version: string;
   content_directory: string;
-  template: string; // Consider using the Template type?
+  theme: Template;
+  // template: string; // Consider using the Template type?
   templates_directory: string; //FIXME: sat by configParser and watched (so its kinda internal?)
   output_directory: string;
   image_widths: number[]; // FIXME: this is a srcset plugin config - should not be here
-  theme: Template;
   plugins: Plugin[];
   marked_options: MarkedOptions;
   open_browser?: boolean;
   devserver_port?: number;
   devserver_enabled?: boolean;
+};
+
+export type WebpubConfigInternal = WebpubConfig & {
+  theme: Template;
+  templates_directory: string;
 };
 
 // todo: consider adding pre-, at- and post- hooks to both Page and Content loops
