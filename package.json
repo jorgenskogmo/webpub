@@ -13,6 +13,9 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./plugins": {
+      "import": "./dist/defaults/plugins"
     }
   },
   "types": "./dist/index.d.ts",
