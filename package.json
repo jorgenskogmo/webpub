@@ -24,7 +24,8 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "pub": "npm version patch && npm run build && npm run pack"
   },
   "dependencies": {
     "marked": "^16.2.0",
