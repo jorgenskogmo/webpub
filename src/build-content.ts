@@ -3,7 +3,7 @@ import { join, relative, dirname, sep } from "node:path";
 import { glob } from "glob";
 import yaml from "js-yaml";
 
-import type { Page, WebpubConfig } from "./webpub.js";
+import type { Page, WebpubConfig } from "./types.js";
 
 export async function build_content(config: WebpubConfig): Promise<void> {
   console.log("+ Building content");

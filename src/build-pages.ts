@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { writeFileSync, mkdirSync, existsSync, readFileSync } from "node:fs";
 
 import { copyDirSync } from "./utils.js";
-import { type Page, type WebpubConfig, WebpubHooks } from "./webpub.js";
+import { type Page, type WebpubConfig, WebpubHooks } from "./types.js";
 
 export async function build_pages(config: WebpubConfig): Promise<void> {
   // todo: discuss,

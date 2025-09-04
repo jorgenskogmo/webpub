@@ -3,11 +3,7 @@ import { basename, join } from "node:path";
 
 import sharp from "sharp";
 
-import {
-  type WebpubConfig,
-  type Plugin,
-  WebpubHooks,
-} from "../../../webpub.js";
+import { type WebpubConfig, type Plugin, WebpubHooks } from "../../../types.js";
 
 const PLUGIN_COMPLETE_MESSAGE = `srcset plugin complete`;
 const IMAGE_REGEX_HTML = /<img[^>]+src=["']((?!https?:)[^"']+)["'][^>]*>/g;

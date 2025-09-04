@@ -4,7 +4,7 @@ import { createServer } from "http";
 import { readFile, stat } from "fs/promises";
 import { WebSocketServer, WebSocket } from "ws";
 
-import type { WebpubConfig } from "./webpub.js";
+import type { WebpubConfig } from "./types.js";
 import { build_content } from "./build-content.js";
 import { build_pages } from "./build-pages.js";
 import { openBrowser } from "./utils.js";

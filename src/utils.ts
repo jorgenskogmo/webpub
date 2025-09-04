@@ -8,7 +8,7 @@ import {
   copyFileSync,
 } from "node:fs";
 
-import type { WebpubConfig } from "./webpub.js";
+import type { WebpubConfig } from "./types.js";
 
 // clear output directory
 export function cleanDestinationDirectory(config: WebpubConfig) {

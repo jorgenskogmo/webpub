@@ -1,7 +1,7 @@
 import { join, resolve } from "node:path";
 import { existsSync, readFileSync } from "node:fs";
 
-import type { WebpubConfig } from "./webpub.js";
+import type { WebpubConfig } from "./types.js";
 import * as srcsetPlugin from "./defaults/plugins/srcset/index.js";
 
 export const loadConfig = async (): Promise<WebpubConfig> => {

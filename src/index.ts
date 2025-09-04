@@ -1,10 +1,17 @@
 import { runBuild, startDevServer, startWatcher, setConfig } from "./dev.js";
 import { cleanDestinationDirectory } from "./utils.js";
 import { loadConfig } from "./configparser.js";
+import type { WebpubConfig } from "./types.js";
+
+export * from "./types.js";
+
+export async function defineConfig(conf: WebpubConfig) {
+  console.log("defineConfig called with", conf);
+}
 
 export async function main() {
   const config = await loadConfig();
-  console.log("webpub config:", config);
+  console.log("main called, loaded config:", config);
 
   setConfig(config);
   cleanDestinationDirectory(config);
