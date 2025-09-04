@@ -1,37 +1,42 @@
 {
-  "name": "webdev",
-  "version": "0.0.11",
-  "description": "A modern website built with TypeScript and Vite",
+  "name": "webpub",
+  "version": "0.1.3",
+  "description": "website builder",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "type": "module",
-  "types": "src/webpub.d.cts",
   "bin": {
-    "webpub": "src/cli.cjs"
+    "webpub": "./dist/cli.js"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
   "files": [
-    "src/"
+    "dist"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-    "start": "bun run src/cli.ts",
-    "build": "bun run src/cli.ts --build-only",
-    "lib:build": "tsup",
-    "lib:pack": "npm run lib:build && cd dist && npm pack",
-    "lib:publish": "npm run lib:build && cd dist && npm publish --access public"
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "marked": "^16.2.0",
+    "js-yaml": "^4.1.0",
+    "glob": "11.0.3",
+    "ws": "^8.18.3",
+    "sharp": "^0.34.3"
   },
   "devDependencies": {
     "@types/bun": "^1.2.21",
     "@types/js-yaml": "^4.0.9",
     "@types/ws": "^8.18.1",
-    "glob": "11.0.3",
-    "js-yaml": "^4.1.0",
-    "marked": "^16.2.0",
-    "tsup": "^8.5.0",
-    "typescript": "5.9.2",
-    "ws": "^8.18.3"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "sharp": "^0.34.3"
+    "typescript": "^5.9.2"
   }
 }

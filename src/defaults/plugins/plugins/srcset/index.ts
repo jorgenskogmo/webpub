@@ -1,4 +1,4 @@
-import { existsSync } from "fs";
+import { existsSync } from "node:fs";
 import { basename, join } from "node:path";
 
 import sharp from "sharp";
