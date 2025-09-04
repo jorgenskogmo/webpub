@@ -4,8 +4,8 @@ node_modules/
 # Build outputs
 dist/
 package/
-*.tgz
 site/
+*.tgz
 
 # Environment files
 .env
@@ -36,16 +36,3 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# Dependency directories
-jspm_packages/

@@ -46,12 +46,16 @@ export async function runBuild(): Promise<void> {
     await build_pages(config);
 
     console.timeEnd("Rebuild");
-    console.log("\n# Build complete. Reloading clients...\n");
-    for (const ws of sockets) {
-      try {
-        ws.send("reload");
-      } catch {
-        sockets.delete(ws);
+    console.log("\n# Build complete.");
+
+    if (config.devserver_enabled) {
+      console.log("# Reloading clients...\n");
+      for (const ws of sockets) {
+        try {
+          ws.send("reload");
+        } catch {
+          sockets.delete(ws);
+        }
       }
     }
   } catch (err) {
@@ -97,36 +101,43 @@ export function startDevServer(): void {
 
     try {
       let filePath = path;
-      let stats: any;
+      let stats = await stat(filePath);
 
-      try {
-        stats = await stat(filePath);
-      } catch {
-        // try index.html
-        filePath = join(path, "index.html");
+      if (stats.isDirectory()) {
+        // Redirect /docs -> /docs/
+        if (!url.pathname.endsWith("/")) {
+          res.writeHead(301, { Location: url.pathname + "/" });
+          res.end();
+          return;
+        }
+
+        // Serve index.html
+        filePath = join(filePath, "index.html");
         stats = await stat(filePath);
       }
 
       if (stats.isFile()) {
-        let content = await readFile(filePath);
+        const content = await readFile(filePath);
+        const contentType = getContentType(filePath);
 
         if (filePath.endsWith(".html")) {
           let html = content.toString("utf8");
           html = injectReloadSnippet(html);
-          res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+          res.writeHead(200, { "Content-Type": contentType });
           res.end(html);
           return;
         }
 
-        // generic file
-        res.writeHead(200);
+        res.writeHead(200, { "Content-Type": contentType });
         res.end(content);
         return;
       }
+
+      res.writeHead(404);
+      res.end("Not Found");
     } catch {
       res.writeHead(404);
       res.end("Not Found");
-      return;
     }
   });
 
@@ -150,9 +161,10 @@ export function startDevServer(): void {
 
   server.listen(config.devserver_port, () => {
     console.log(
-      `Dev server running at http://localhost:${config.devserver_port}`
+      `# Dev server running at http://localhost:${config.devserver_port}`
     );
     if (config.open_browser) {
+      console.log(`# Opening browser...`);
       openBrowser(`http://localhost:${config.devserver_port}`);
     }
   });
@@ -166,8 +178,26 @@ function scheduleBuild(): void {
 }
 
 function injectReloadSnippet(html: string): string {
+  if (!config.devserver_enabled) return html;
+
   if (html.includes("</body>")) {
     return html.replace("</body>", `${LIVE_RELOAD_SNIPPET}</body>`);
   }
   return html + LIVE_RELOAD_SNIPPET;
+}
+
+function getContentType(filePath: string): string {
+  const ext = filePath.toLowerCase();
+  if (ext.endsWith(".html")) return "text/html; charset=utf-8";
+  if (ext.endsWith(".css")) return "text/css; charset=utf-8";
+  if (ext.endsWith(".js")) return "application/javascript; charset=utf-8";
+  if (ext.endsWith(".json")) return "application/json; charset=utf-8";
+  if (ext.endsWith(".svg")) return "image/svg+xml";
+  if (ext.endsWith(".png")) return "image/png";
+  if (ext.endsWith(".jpg") || ext.endsWith(".jpeg")) return "image/jpeg";
+  if (ext.endsWith(".gif")) return "image/gif";
+  if (ext.endsWith(".woff")) return "font/woff";
+  if (ext.endsWith(".woff2")) return "font/woff2";
+  if (ext.endsWith(".ttf")) return "font/ttf";
+  return "application/octet-stream";
 }
