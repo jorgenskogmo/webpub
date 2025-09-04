@@ -2,7 +2,7 @@ import { runBuild, startDevServer, startWatcher, setConfig } from "./dev.js";
 import { cleanDestinationDirectory } from "./utils.js";
 import { loadConfig } from "./configparser.js";
 
-async function main() {
+export async function main() {
   const config = await loadConfig();
   console.log("webpub config:", config);
 
