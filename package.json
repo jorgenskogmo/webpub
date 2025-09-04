@@ -15,10 +15,12 @@
       "types": "./dist/index.d.ts"
     },
     "./plugins": {
-      "import": "./dist/plugins"
+      "import": "./dist/plugins/*",
+      "types": "./dist/plugins/*"
     },
     "./themes": {
-      "import": "./dist/themes"
+      "import": "./dist/themes/*",
+      "types": "./dist/themes/*"
     }
   },
   "types": "./dist/index.d.ts",
