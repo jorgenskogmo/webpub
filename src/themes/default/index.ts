@@ -1,4 +1,4 @@
-import type { Page, Template, WebpubConfig } from "../../../../types.js";
+import type { Page, Template, WebpubConfig } from "../../types.js";
 
 export const head = (config: WebpubConfig, _page: Page) => `<!DOCTYPE html>
   <html lang="en">
