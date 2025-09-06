@@ -52,7 +52,7 @@ export async function defineConfig(conf: WebpubOptions) {
 }
 
 export async function main() {
-  const configPath = join(process.cwd(), "xx", configFileName);
+  const configPath = join(process.cwd(), configFileName);
   if (existsSync(configPath)) {
     await import(configPath);
   } else {
