@@ -72,7 +72,8 @@ async function start(config: WebpubConfig) {
   // console.log("webpub: start() config:", config);
 
   // const pkgUrl = await import.meta.resolve("../package.json");
-  const pkgUrl = join(process.cwd(), "../package.json");
+  // const pkgUrl = join(process.cwd(), "../package.json");
+  const pkgUrl = join(import.meta.dirname, "../package.json");
   const { version } = JSON.parse(await readFile(pkgUrl, "utf-8"));
   console.log("version:", version);
 
