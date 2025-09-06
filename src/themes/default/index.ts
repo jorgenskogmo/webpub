@@ -1,6 +1,6 @@
-import type { Page, Template, WebpubConfig } from "../../types.js";
+import type { RenderPage, Template, WebpubConfig } from "../../types.js";
 
-export const head = (config: WebpubConfig, _page: Page) => `<!DOCTYPE html>
+export const head = (config: WebpubConfig, _page: RenderPage) => `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
@@ -10,22 +10,24 @@ export const head = (config: WebpubConfig, _page: Page) => `<!DOCTYPE html>
     </head>
   `;
 
-export const foot = (_config: WebpubConfig, _page: Page) => `
+export const foot = (_config: WebpubConfig, _page: RenderPage) => `
   </body>
 </html>`;
 
-export const main = (config: WebpubConfig, page: Page) => `
+export const main = (config: WebpubConfig, page: RenderPage) => `
 <body>
   <main>
     <h1>Default page (${config.name} ${config.version})</h1>
 
     <code>${JSON.stringify(page.meta)}</code>
+    
+    <code>${JSON.stringify(page)}</code>
 
     <div>${page.content}</div>
   </main>
 `;
 
-export const render = (config: WebpubConfig, page: Page) =>
-  `${head(config, page)} ${main(config, page)} ${foot(config, page)}`;
+export const render = (config: WebpubConfig, page: RenderPage) =>
+	`${head(config, page)} ${main(config, page)} ${foot(config, page)}`;
 
 export default { head, main, foot, render } as Template;

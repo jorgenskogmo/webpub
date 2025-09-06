@@ -49,7 +49,10 @@ export type Plugin<TConfig = unknown> = {
 	configure: (opts: Partial<TConfig>) => void;
 };
 
-export type TemplateFunction = (config: WebpubConfig, page: Page) => string;
+export type TemplateFunction = (
+	config: WebpubConfig,
+	page: RenderPage,
+) => string;
 
 export type Template = {
 	head: TemplateFunction;
@@ -69,4 +72,20 @@ export type Json =
 export type Page = {
 	meta: { [key: string]: Json };
 	content: string;
+};
+
+export type TreeNode = {
+	url: string;
+	page: Page;
+	type: "list" | "detail";
+	children: TreeNode[];
+};
+
+export type RenderPage = {
+	url: string;
+	meta: { [key: string]: Json };
+	content: string;
+	type: "list" | "detail";
+	children: RenderPage[]; // full objects
+	parent: string | null;
 };
