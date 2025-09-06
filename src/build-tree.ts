@@ -6,19 +6,12 @@ export function buildTree(content: Record<string, Page>): TreeNode {
 		throw new Error('Root page "/./" is missing in content');
 	}
 
-	const root: TreeNode = {
-		url: "/./",
-		page: rootPage,
-		type: "list",
-		children: [],
-	};
-
 	const urls = Object.keys(content);
 
 	function getParentPath(path: string): string | null {
 		if (path === "/./") return null;
 		const parts = path.split("/").filter(Boolean);
-		if (parts.length === 0) return "/./"; // direct child of root
+		if (parts.length === 0) return "/./";
 		parts.pop();
 		return parts.length > 0 ? `/${parts.join("/")}/` : "/./";
 	}
@@ -38,6 +31,13 @@ export function buildTree(content: Record<string, Page>): TreeNode {
 			parentNode.type = "list";
 		}
 	}
+
+	// ✅ get the root node from the map, not the standalone object
+	const root = nodes.get("/./");
+	if (!root) {
+		throw new Error('Root node "/./" not found after building tree');
+	}
+	root.type = "list"; // ensure root is marked list
 
 	return root;
 }
