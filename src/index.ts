@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { existsSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 
 import { runBuild, startDevServer, startWatcher, setConfig } from "./dev.js";
 import { cleanDestinationDirectory } from "./utils.js";
@@ -10,7 +11,8 @@ export * from "./types.js";
 import * as defaultTheme from "./themes/default/index.js";
 import * as srcsetPlugin from "./plugins/srcset/index.js";
 
-import { version } from "../package.json";
+const pkgUrl = await import.meta.resolve("../package.json");
+const { version } = JSON.parse(await readFile(pkgUrl, "utf-8"));
 
 const configFileName = "webpub.config.ts";
 
