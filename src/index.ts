@@ -9,92 +9,91 @@ import type { WebpubConfig, WebpubOptions } from "./types.js";
 export * from "./types.js";
 
 import * as defaultTheme from "./themes/default/index.js";
-import * as srcsetPlugin from "./plugins/srcset/index.js";
+import { srcsetPlugin } from "./plugins/srcset/index.js";
 
 const configFileName = "webpub.config.ts";
 
 const defaultOptions: WebpubConfig = {
-  name: "webpub default",
-  version: "0.0.1",
-  content_directory: join(process.cwd(), "content"),
-  output_directory: join(process.cwd(), "site"),
+	name: "webpub default",
+	version: "0.0.1",
+	content_directory: join(process.cwd(), "content"),
+	output_directory: join(process.cwd(), "site"),
 
-  theme: defaultTheme,
-  theme_directory: join(import.meta.dirname, "themes/default"),
-  plugins: [srcsetPlugin],
-  image_widths: [150, 300, 600, 1200], // FIXME: this is a srcset plugin config - should not be here
+	theme: defaultTheme,
+	theme_directory: join(import.meta.dirname, "themes/default"),
+	plugins: [srcsetPlugin],
 
-  marked_options: { gfm: true, breaks: true },
-  open_browser: true,
-  devserver_enabled: true,
-  devserver_port: 3000,
+	marked_options: { gfm: true, breaks: true },
+	open_browser: true,
+	devserver_enabled: true,
+	devserver_port: 3000,
 };
 
+// export async function defineConfig(conf: Partial<WebpubConfig>) {
 export async function defineConfig(conf: WebpubOptions) {
-  let config: WebpubConfig = { ...defaultOptions, ...conf };
+	// const config: WebpubConfig = { ...defaultOptions, ...conf };
+	Object.assign(defaultOptions, conf);
 
-  if (!existsSync(config.content_directory)) {
-    console.error(
-      `webpub: Content directory not found ${config.content_directory}`
-    );
-    process.exit(1);
-  }
+	if (!existsSync(defaultOptions.content_directory)) {
+		console.error(
+			`webpub: Content directory not found ${defaultOptions.content_directory}`,
+		);
+		process.exit(1);
+	}
 
-  start(config);
+	start(defaultOptions);
 }
 
+// called by cli
 export async function main() {
-  const configPath = join(process.cwd(), configFileName);
-  if (existsSync(configPath)) {
-    await import(configPath);
-  } else {
-    console.error(
-      `webpub: '${configFileName}' file not found. Using defaults.`
-    );
+	const configPath = join(process.cwd(), configFileName);
+	if (existsSync(configPath)) {
+		// config file found. The config file will call defineConfig, then start()
+		await import(configPath);
+	} else {
+		console.error(
+			`webpub: '${configFileName}' file not found. Using defaults.`,
+		);
+		// run with default config
+		// use default theme
+		defaultOptions.theme_directory = join(
+			import.meta.dirname,
+			"themes/default",
+		);
+		defaultOptions.theme = await import(
+			join(import.meta.dirname, "themes/default/index.js")
+		);
 
-    defaultOptions.theme_directory = join(
-      import.meta.dirname,
-      "themes/default"
-    );
-    defaultOptions.theme = await import(
-      join(import.meta.dirname, "themes/default/index.js")
-    );
-    console.log("2-defaultOptions:", defaultOptions);
-
-    // TODO: Run with default config or exit?
-    // process.exit(1);
-    defineConfig(defaultOptions);
-  }
+		defineConfig(defaultOptions);
+	}
 }
 
 async function start(config: WebpubConfig) {
-  console.log("webpub: start()", import.meta);
-  // console.log("webpub: start() config:", config);
+	// console.log("webpub: start()");
+	// console.log("webpub: start() config:", config);
 
-  // const pkgUrl = await import.meta.resolve("../package.json");
-  // const pkgUrl = join(process.cwd(), "../package.json");
-  const pkgUrl = join(import.meta.dirname, "../package.json");
-  const { version } = JSON.parse(await readFile(pkgUrl, "utf-8"));
-  console.log("version:", version);
+	const pkgUrl = join(import.meta.dirname, "../package.json");
+	const { version } = JSON.parse(await readFile(pkgUrl, "utf-8"));
+	console.log(`# webpub version: ${version} starting`);
 
-  if (!config) {
-    console.error("webpub.start: missing configuration");
-    return;
-  }
+	if (!config) {
+		console.error("webpub.start: missing configuration");
+		return;
+	}
 
-  setConfig(config);
-  cleanDestinationDirectory(config);
+	setConfig(config);
+	cleanDestinationDirectory(config);
 
-  if (!config.devserver_enabled) {
-    console.log("# Running in build-only mode...");
-    await runBuild();
-    return;
-  }
+	if (!config.devserver_enabled) {
+		console.log("# Running in build-only mode...");
+		await runBuild();
+		return;
+	}
 
-  startWatcher();
-  startDevServer();
+	startWatcher();
+	startDevServer();
 
-  setTimeout(() => {
-    runBuild();
-  }, 10);
+	setTimeout(() => {
+		runBuild();
+	}, 10);
 }
