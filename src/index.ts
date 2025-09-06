@@ -21,7 +21,7 @@ const defaultOptions: WebpubConfig = {
   output_directory: join(process.cwd(), "site"),
 
   theme: defaultTheme,
-  theme_directory: "./themes/default",
+  theme_directory: join(dirname, "themes/default"),
   plugins: [srcsetPlugin],
   image_widths: [150, 300, 600, 1200], // FIXME: this is a srcset plugin config - should not be here
 
