@@ -61,10 +61,6 @@ export async function main() {
     );
     console.log("2-defaultOptions:", defaultOptions);
 
-    const pkgUrl = await import.meta.resolve("../package.json");
-    const { version } = JSON.parse(await readFile(pkgUrl, "utf-8"));
-    console.log("version:", version);
-
     // TODO: Run with default config or exit?
     // process.exit(1);
     defineConfig(defaultOptions);
@@ -74,6 +70,10 @@ export async function main() {
 async function start(config: WebpubConfig) {
   console.log("webpub: start()");
   // console.log("webpub: start() config:", config);
+
+  const pkgUrl = await import.meta.resolve("../package.json");
+  const { version } = JSON.parse(await readFile(pkgUrl, "utf-8"));
+  console.log("version:", version);
 
   if (!config) {
     console.error("webpub.start: missing configuration");
