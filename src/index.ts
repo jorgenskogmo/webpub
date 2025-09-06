@@ -10,11 +10,9 @@ export * from "./types.js";
 import * as defaultTheme from "./themes/default/index.js";
 import * as srcsetPlugin from "./plugins/srcset/index.js";
 
+import { version } from "../package.json";
+
 const configFileName = "webpub.config.ts";
-const dirname = import.meta.dirname;
-console.log("dirname:", dirname);
-console.log("import.meta.url:", import.meta.url);
-console.log("import.meta:", import.meta);
 
 const defaultOptions: WebpubConfig = {
   name: "webpub default",
@@ -34,13 +32,8 @@ const defaultOptions: WebpubConfig = {
 };
 
 export async function defineConfig(conf: WebpubOptions) {
-  console.log("defineConfig()");
-
-  // console.log("defineConfig:: defaul config:", defaultOptions);
-  // console.log("defineConfig:: passed config:", conf);
   let config: WebpubConfig = { ...defaultOptions, ...conf };
 
-  // Make sure key directories exits
   if (!existsSync(config.content_directory)) {
     console.error(
       `webpub: Content directory not found ${config.content_directory}`
@@ -59,7 +52,7 @@ export async function main() {
     console.error(
       `webpub: '${configFileName}' file not found. Using defaults.`
     );
-    console.log("1-defaultOptions:", defaultOptions);
+
     defaultOptions.theme_directory = join(
       import.meta.dirname,
       "themes/default"
@@ -67,8 +60,9 @@ export async function main() {
     defaultOptions.theme = await import(
       join(import.meta.dirname, "themes/default/index.js")
     );
-    console.log("2-defaultOptions:", defaultOptions);
 
+    console.log("version:", version);
+    console.log("2-defaultOptions:", defaultOptions);
     // TODO: Run with default config or exit?
     // process.exit(1);
     defineConfig(defaultOptions);
@@ -76,7 +70,8 @@ export async function main() {
 }
 
 async function start(config: WebpubConfig) {
-  console.log("webpub: start() config:", config);
+  console.log("webpub: start()");
+  // console.log("webpub: start() config:", config);
 
   if (!config) {
     console.error("webpub.start: missing configuration");
