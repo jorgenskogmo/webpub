@@ -39,7 +39,7 @@ export async function runBuild(): Promise<void> {
 
   try {
     console.time("Rebuild");
-    console.log("# Running build_content");
+    console.log("\n# Running build_content");
     await build_content(config);
 
     console.log("\n# Running build_pages");
@@ -67,7 +67,7 @@ export async function runBuild(): Promise<void> {
 }
 
 export function startWatcher(): void {
-  const dirs = [config.content_directory, config.templates_directory];
+  const dirs = [config.content_directory, config.theme_directory];
   for (const dir of dirs) {
     watch(dir, { recursive: true }, (eventType, filename) => {
       const lapse = Date.now() - buildCompletedAt;
@@ -80,7 +80,7 @@ export function startWatcher(): void {
         scheduleBuild();
       }
     });
-    console.log(`Watching ${dir} for changes...`);
+    console.log(`# Watching '${dir}' for changes...`);
   }
 }
 

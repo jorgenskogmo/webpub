@@ -1,24 +1,36 @@
 import type { MarkedOptions } from "marked";
 
-export type WebpubConfig = {
+// public:
+export type WebpubOptions = {
   name: string;
   version: string;
   content_directory: string;
-  theme: Template;
-  // template: string; // Consider using the Template type?
-  templates_directory: string; //FIXME: sat by configParser and watched (so its kinda internal?)
   output_directory: string;
-  image_widths: number[]; // FIXME: this is a srcset plugin config - should not be here
-  plugins: Plugin[];
-  marked_options: MarkedOptions;
+
+  // has defaults:
+  theme?: Template;
+  theme_directory?: string;
+  plugins?: Plugin[];
+  image_widths?: number[];
+
+  // optional:
+  marked_options?: MarkedOptions;
   open_browser?: boolean;
   devserver_port?: number;
   devserver_enabled?: boolean;
 };
 
-export type WebpubConfigInternal = WebpubConfig & {
+// internal:
+export type WebpubConfig = WebpubOptions & {
   theme: Template;
-  templates_directory: string;
+  theme_directory: string;
+  plugins: Plugin[];
+  image_widths: number[];
+
+  marked_options: MarkedOptions;
+  open_browser: boolean;
+  devserver_port: number;
+  devserver_enabled: boolean;
 };
 
 // todo: consider adding pre-, at- and post- hooks to both Page and Content loops

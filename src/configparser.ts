@@ -37,10 +37,10 @@ export const loadConfig = async (): Promise<WebpubConfig> => {
 
   config.output_directory = resolve(process.cwd(), config.output_directory);
   config.content_directory = resolve(process.cwd(), config.content_directory);
-  config.templates_directory = resolve(process.cwd(), config.template);
+  config.theme_directory = resolve(process.cwd(), config.template);
 
   // load templates
-  const templateFile = resolve(config.templates_directory, "index.js");
+  const templateFile = resolve(config.theme_directory, "index.js");
   console.log("templateFile:", templateFile);
   if (existsSync(templateFile)) {
     config.theme = await import(templateFile);

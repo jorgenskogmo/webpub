@@ -62,7 +62,7 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
   const copyAssetsMessage = `Copied assets from ${config.content_directory}/assets to ${config.output_directory}/assets`;
   console.time(copyAssetsMessage);
   copyDirSync(
-    join(config.templates_directory, "assets"),
+    join(config.theme_directory, "assets"),
     join(config.output_directory, "assets")
   );
   console.timeEnd(copyAssetsMessage);
