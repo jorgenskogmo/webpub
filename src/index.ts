@@ -11,9 +11,6 @@ export * from "./types.js";
 import * as defaultTheme from "./themes/default/index.js";
 import * as srcsetPlugin from "./plugins/srcset/index.js";
 
-const pkgUrl = await import.meta.resolve("../package.json");
-const { version } = JSON.parse(await readFile(pkgUrl, "utf-8"));
-
 const configFileName = "webpub.config.ts";
 
 const defaultOptions: WebpubConfig = {
@@ -62,9 +59,12 @@ export async function main() {
     defaultOptions.theme = await import(
       join(import.meta.dirname, "themes/default/index.js")
     );
-
-    console.log("version:", version);
     console.log("2-defaultOptions:", defaultOptions);
+
+    const pkgUrl = await import.meta.resolve("../package.json");
+    const { version } = JSON.parse(await readFile(pkgUrl, "utf-8"));
+    console.log("version:", version);
+
     // TODO: Run with default config or exit?
     // process.exit(1);
     defineConfig(defaultOptions);
