@@ -127,7 +127,7 @@ async function walkAndBuild(
 		children: childrenLite,
 	};
 
-	console.log("currentPage:", currentPage);
+	// console.log("currentPage:", currentPage);
 
 	// render template
 	const output = `${config.theme.render(config, currentPage)}`;
