@@ -11,8 +11,10 @@ import * as defaultTheme from "./themes/default/index.js";
 import * as srcsetPlugin from "./plugins/srcset/index.js";
 
 const configFileName = "webpub.config.ts";
-const dirname = new URL(".", import.meta.url).pathname;
+const dirname = import.meta.dirname;
 console.log("dirname:", dirname);
+console.log("import.meta.url:", import.meta.url);
+console.log("import.meta:", import.meta);
 
 const defaultOptions: WebpubConfig = {
   name: "webpub default",
@@ -21,7 +23,7 @@ const defaultOptions: WebpubConfig = {
   output_directory: join(process.cwd(), "site"),
 
   theme: defaultTheme,
-  theme_directory: join(dirname, "themes/default"),
+  theme_directory: join(import.meta.dirname, "themes/default"),
   plugins: [srcsetPlugin],
   image_widths: [150, 300, 600, 1200], // FIXME: this is a srcset plugin config - should not be here
 
@@ -57,6 +59,16 @@ export async function main() {
     console.error(
       `webpub: '${configFileName}' file not found. Using defaults.`
     );
+    console.log("1-defaultOptions:", defaultOptions);
+    defaultOptions.theme_directory = join(
+      import.meta.dirname,
+      "themes/default"
+    );
+    defaultOptions.theme = await import(
+      join(import.meta.dirname, "themes/default/index.js")
+    );
+    console.log("2-defaultOptions:", defaultOptions);
+
     // TODO: Run with default config or exit?
     // process.exit(1);
     defineConfig(defaultOptions);

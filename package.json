@@ -41,7 +41,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && cp -r src/themes/default/assets dist/themes/default/",
     "prepublishOnly": "npm run build",
     "clean": "rm -rf dist",
     "pub": "npm run clean && npm version patch && npm run build && npm pack"
