@@ -33,6 +33,7 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
 	console.time(buildPagesMessage);
 
 	const tree = buildTree(content);
+	console.log("tree:", tree);
 	console.dir(tree, { depth: null });
 
 	await walkAndBuild(tree, null, config);
@@ -125,6 +126,8 @@ async function walkAndBuild(
 		parent: parent ? parent.url : null,
 		children: childrenLite,
 	};
+
+	console.log("currentPage:", currentPage);
 
 	// render template
 	const output = `${config.theme.render(config, currentPage)}`;

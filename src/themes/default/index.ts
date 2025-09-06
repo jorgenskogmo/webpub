@@ -27,7 +27,9 @@ export const main = (config: WebpubConfig, page: RenderPage) => `
   </main>
 `;
 
-export const render = (config: WebpubConfig, page: RenderPage) =>
-	`${head(config, page)} ${main(config, page)} ${foot(config, page)}`;
+export const render = (config: WebpubConfig, page: RenderPage) => {
+	console.log("@render:", page);
+	return `${head(config, page)} ${main(config, page)} ${foot(config, page)}`;
+};
 
 export default { head, main, foot, render } as Template;

@@ -13,7 +13,7 @@ import { srcsetPlugin } from "./plugins/srcset/index.js";
 
 const configFileName = "webpub.config.ts";
 
-const defaultOptions: WebpubConfig = {
+const config: WebpubConfig = {
 	name: "webpub default",
 	version: "0.0.1",
 	content_directory: join(process.cwd(), "content"),
@@ -32,16 +32,16 @@ const defaultOptions: WebpubConfig = {
 // export async function defineConfig(conf: Partial<WebpubConfig>) {
 export async function defineConfig(conf: WebpubOptions) {
 	// const config: WebpubConfig = { ...defaultOptions, ...conf };
-	Object.assign(defaultOptions, conf);
+	Object.assign(config, conf);
 
-	if (!existsSync(defaultOptions.content_directory)) {
+	if (!existsSync(config.content_directory)) {
 		console.error(
-			`webpub: Content directory not found ${defaultOptions.content_directory}`,
+			`webpub: Content directory not found ${config.content_directory}`,
 		);
 		process.exit(1);
 	}
 
-	start(defaultOptions);
+	start(config);
 }
 
 // called by cli
@@ -56,15 +56,12 @@ export async function main() {
 		);
 		// run with default config
 		// use default theme
-		defaultOptions.theme_directory = join(
-			import.meta.dirname,
-			"themes/default",
-		);
-		defaultOptions.theme = await import(
+		config.theme_directory = join(import.meta.dirname, "themes/default");
+		config.theme = await import(
 			join(import.meta.dirname, "themes/default/index.js")
 		);
 
-		defineConfig(defaultOptions);
+		defineConfig(config);
 	}
 }
 
