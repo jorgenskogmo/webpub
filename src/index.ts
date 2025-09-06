@@ -68,7 +68,7 @@ export async function main() {
 }
 
 async function start(config: WebpubConfig) {
-  console.log("webpub: start()");
+  console.log("webpub: start()", import.meta);
   // console.log("webpub: start() config:", config);
 
   // const pkgUrl = await import.meta.resolve("../package.json");
