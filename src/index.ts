@@ -34,7 +34,7 @@ const defaultOptions: WebpubConfig = {
 };
 
 export async function defineConfig(conf: WebpubOptions) {
-  // console.log("defineConfig()");
+  console.log("defineConfig()");
 
   // console.log("defineConfig:: defaul config:", defaultOptions);
   // console.log("defineConfig:: passed config:", conf);
@@ -76,7 +76,7 @@ export async function main() {
 }
 
 async function start(config: WebpubConfig) {
-  console.log("webpub: start()");
+  console.log("webpub: start() config:", config);
 
   if (!config) {
     console.error("webpub.start: missing configuration");
