@@ -9,10 +9,6 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
   // todo: discuss,
   marked.setOptions(config.marked_options);
 
-  // dynamically import the generated content.json
-  // const content = (await import(join(config.content_directory, "content.json")))
-  //   .default as Record<string, Page>;
-
   let content: Record<string, Page> = {};
   const contentJsonPath = join(config.content_directory, "content.json");
   if (existsSync(contentJsonPath)) {

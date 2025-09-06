@@ -1,9 +1,8 @@
-import { join, resolve } from "node:path";
-import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { existsSync } from "node:fs";
 
 import { runBuild, startDevServer, startWatcher, setConfig } from "./dev.js";
 import { cleanDestinationDirectory } from "./utils.js";
-// import { loadConfig } from "./configparser.js";
 import type { WebpubConfig, WebpubOptions } from "./types.js";
 
 export * from "./types.js";
@@ -12,6 +11,8 @@ import * as defaultTheme from "./themes/default/index.js";
 import * as srcsetPlugin from "./plugins/srcset/index.js";
 
 const configFileName = "webpub.config.ts";
+const dirname = new URL(".", import.meta.url).pathname;
+console.log("dirname:", dirname);
 
 const defaultOptions: WebpubConfig = {
   name: "webpub default",
@@ -32,6 +33,7 @@ const defaultOptions: WebpubConfig = {
 
 export async function defineConfig(conf: WebpubOptions) {
   // console.log("defineConfig()");
+
   // console.log("defineConfig:: defaul config:", defaultOptions);
   // console.log("defineConfig:: passed config:", conf);
   let config: WebpubConfig = { ...defaultOptions, ...conf };
@@ -48,14 +50,14 @@ export async function defineConfig(conf: WebpubOptions) {
 }
 
 export async function main() {
-  const configPath = join(process.cwd(), configFileName);
+  const configPath = join(process.cwd(), "xx", configFileName);
   if (existsSync(configPath)) {
-    const configFile = await import(configPath);
+    await import(configPath);
   } else {
-    // Run with default config or exit?
     console.error(
       `webpub: '${configFileName}' file not found. Using defaults.`
     );
+    // TODO: Run with default config or exit?
     // process.exit(1);
     defineConfig(defaultOptions);
   }
@@ -63,10 +65,9 @@ export async function main() {
 
 async function start(config: WebpubConfig) {
   console.log("webpub: start()");
-  // console.log("start() - config:", config);
 
   if (!config) {
-    console.error("start: missing configuration");
+    console.error("webpub.start: missing configuration");
     return;
   }
 
