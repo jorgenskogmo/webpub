@@ -30,8 +30,11 @@ const config: WebpubConfig = {
 };
 
 export async function defineConfig(conf: WebpubOptions) {
-	// const config: WebpubConfig = { ...defaultOptions, ...conf };
 	Object.assign(config, conf);
+
+	if (conf.theme_directory) {
+		config.theme_directory = join(process.cwd(), config.theme_directory);
+	}
 
 	if (!existsSync(config.content_directory)) {
 		console.error(
