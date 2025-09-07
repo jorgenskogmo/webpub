@@ -32,7 +32,6 @@ export function buildTree(content: Record<string, Page>): TreeNode {
 		}
 	}
 
-	// ✅ get the root node from the map, not the standalone object
 	const root = nodes.get("/./");
 	if (!root) {
 		throw new Error('Root node "/./" not found after building tree');
