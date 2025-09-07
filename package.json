@@ -1,6 +1,6 @@
 {
   "name": "@jorgenskogmo/webpub",
-  "version": "0.1.44",
+  "version": "0.1.45",
   "description": "website builder",
   "keywords": [],
   "author": "",
@@ -38,7 +38,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=22"
+    "node": ">=20"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && cp -r src/themes/default/assets dist/themes/default/",
