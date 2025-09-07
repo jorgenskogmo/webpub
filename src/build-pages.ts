@@ -33,8 +33,7 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
 	console.time(buildPagesMessage);
 
 	const tree = buildTree(content);
-	console.log("tree:", tree);
-	console.dir(tree, { depth: null });
+	// console.log("tree:", tree);
 
 	await walkAndBuild(tree, null, config);
 

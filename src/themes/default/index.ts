@@ -22,6 +22,14 @@ export const main = (config: WebpubConfig, page: RenderPage) => `
     <code>${JSON.stringify(page.meta)}</code>
     
     <code>${JSON.stringify(page)}</code>
+    
+    <script>
+      const data = {
+        config: ${JSON.stringify(config)},
+        page: ${JSON.stringify(page)},
+      }
+      console.log(JSON.parse(data));
+    </script>
 
     <div>${page.content}</div>
   </main>
