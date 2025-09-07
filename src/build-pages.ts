@@ -16,6 +16,7 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
 	// todo: discuss,
 	marked.setOptions(config.marked_options);
 
+	// load content from json store
 	let content: Record<string, Page> = {};
 	const contentJsonPath = join(config.content_directory, "content.json");
 	if (existsSync(contentJsonPath)) {
@@ -29,8 +30,13 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
 		}
 	}
 
+	// start rebuild timer
 	const buildPagesMessage = "Rebuilt all pages";
 	console.time(buildPagesMessage);
+
+	// (re)load rendering template
+	console.log(">> Reloading theme from", config.theme_directory);
+	config.theme = await import(join(config.theme_directory, "index.js"));
 
 	const tree = buildTree(content);
 	// console.log("tree:", tree);
@@ -48,17 +54,6 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
 		join(config.output_directory, "assets"),
 	);
 	console.timeEnd(copyAssetsMessage);
-}
-
-function toLiteNode(node: TreeNode, parent: string | null): RenderPage {
-	return {
-		url: node.url,
-		meta: node.page.meta,
-		content: "", // strip markdown/HTML
-		type: node.type,
-		parent,
-		children: node.children.map((child) => toLiteNode(child, node.url)),
-	};
 }
 
 async function walkAndBuild(
@@ -108,4 +103,15 @@ async function walkAndBuild(
 	for (const child of node.children) {
 		await walkAndBuild(child, node, config);
 	}
+}
+
+function toLiteNode(node: TreeNode, parent: string | null): RenderPage {
+	return {
+		url: node.url,
+		meta: node.page.meta,
+		content: "", // strip markdown/HTML
+		type: node.type,
+		parent,
+		children: node.children.map((child) => toLiteNode(child, node.url)),
+	};
 }

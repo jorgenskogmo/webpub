@@ -18,9 +18,13 @@ const config: WebpubConfig = {
 	version: "0.0.1",
 	content_directory: join(process.cwd(), "content"),
 	output_directory: join(process.cwd(), "site"),
+	// template_directory: join(process.cwd(), "themes/default"),
+	template_directory: join(import.meta.dirname, "themes/default"),
 
+	//@deprecate
 	theme: defaultTheme,
 	theme_directory: join(import.meta.dirname, "themes/default"),
+
 	plugins: [srcsetPlugin],
 
 	marked_options: { gfm: true, breaks: true },
@@ -51,16 +55,8 @@ export async function main() {
 		// config file found. The config file will call defineConfig, then start()
 		await import(configPath);
 	} else {
-		console.error(
-			`webpub: '${configFileName}' file not found. Using defaults.`,
-		);
 		// run with default config
-		// use default theme
-		config.theme_directory = join(import.meta.dirname, "themes/default");
-		config.theme = await import(
-			join(import.meta.dirname, "themes/default/index.js")
-		);
-
+		console.log(`webpub: '${configFileName}' file not found. Using defaults.`);
 		defineConfig(config);
 	}
 }

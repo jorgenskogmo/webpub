@@ -6,6 +6,7 @@ export type WebpubOptions = {
 	version: string;
 	content_directory: string;
 	output_directory: string;
+	template_directory: string;
 
 	// has defaults:
 	theme?: Template;
