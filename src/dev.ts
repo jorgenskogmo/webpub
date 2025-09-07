@@ -20,8 +20,7 @@ const LIVE_RELOAD_SNIPPET = `
   (() => {
     const ws = new WebSocket("ws://" + location.host + "/livereload");
     ws.onmessage = (e) => {
-      console.log("ws msg", e)
-      // if (e.data === "reload") location.reload();
+      if (e.data === "reload") location.reload();
     };
   })();
 </script>
