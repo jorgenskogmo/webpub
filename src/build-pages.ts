@@ -36,7 +36,9 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
 
 	// (re)load rendering template
 	console.log(">> Reloading theme from", config.theme_directory);
-	config.theme = await import(join(config.theme_directory, "index.js"));
+	config.theme = await import(
+		join(config.theme_directory, "index.js", `?t=${Date.now()}`)
+	);
 
 	const tree = buildTree(content);
 	// console.log("tree:", tree);
