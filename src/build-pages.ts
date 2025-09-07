@@ -37,35 +37,6 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
 
 	await walkAndBuild(tree, null, config);
 
-	/*
-	for (const [url, page] of Object.entries(content)) {
-		console.log("\n+ Building page for URL:", url);
-
-		// setup destination directory
-		const dirPath = join(config.output_directory, url);
-		const imagesDir = join(config.output_directory, url, "images");
-		mkdirSync(imagesDir, { recursive: true });
-
-		// convert markdown to html
-		let html = await marked.parse(page.content);
-
-		// process html with plugins
-		for (const plugin of config.plugins) {
-			if (plugin.hook === WebpubHooks.BUILD_PAGE) {
-				html = await plugin.run(config, url, html);
-			}
-		}
-
-		// render page with template
-		// todo: determine which theme layout template to use
-		const output = `${config.theme.render(config, {
-			meta: page.meta,
-			content: html,
-		})}`;
-		const outputPath = join(dirPath, "index.html");
-		writeFileSync(outputPath, output);
-	}
-    */
 	console.log("");
 	console.timeEnd(buildPagesMessage);
 
@@ -101,7 +72,7 @@ async function walkAndBuild(
 	const imagesDir = join(dirPath, "images");
 	mkdirSync(imagesDir, { recursive: true });
 
-	// parse markdown → HTML for this node only
+	// parse markdown → HTML
 	let html = await marked.parse(node.page.content);
 
 	// process plugins
