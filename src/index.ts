@@ -18,13 +18,9 @@ const config: WebpubConfig = {
 	version: "0.0.1",
 	content_directory: join(process.cwd(), "content"),
 	output_directory: join(process.cwd(), "site"),
-	// template_directory: join(process.cwd(), "themes/default"),
-	template_directory: join(import.meta.dirname, "themes/default"),
-
-	//@deprecate
-	theme: defaultTheme,
 	theme_directory: join(import.meta.dirname, "themes/default"),
 
+	theme: defaultTheme,
 	plugins: [srcsetPlugin],
 
 	marked_options: { gfm: true, breaks: true },
@@ -33,7 +29,6 @@ const config: WebpubConfig = {
 	devserver_port: 3000,
 };
 
-// export async function defineConfig(conf: Partial<WebpubConfig>) {
 export async function defineConfig(conf: WebpubOptions) {
 	// const config: WebpubConfig = { ...defaultOptions, ...conf };
 	Object.assign(config, conf);

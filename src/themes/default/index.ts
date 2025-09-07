@@ -27,10 +27,16 @@ export const main = (config: WebpubConfig, page: RenderPage) => `
 
     <div>${page.content}</div>
   </main>
+  <textarea style="display:none;" id="data-page">${JSON.stringify(page)}</textarea>
+    <script>
+      const txt = document.querySelector("#data-page").value.trim();
+      // console.log("txt:", txt)
+      console.log("page:", JSON.parse(txt))
+    </script>
 `;
 
 export const render = (config: WebpubConfig, page: RenderPage) => {
-	console.log("@render:", page);
+	// console.log("@render:", page);
 	return `${head(config, page)} ${main(config, page)} ${foot(config, page)}`;
 };
 
