@@ -88,3 +88,5 @@ export type RenderPage = {
 	children: RenderPage[]; // full objects
 	parent: string | null;
 };
+
+export type UrlPageMap = { [key: string]: RenderPage };

@@ -4,16 +4,18 @@ import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { WebSocketServer, type WebSocket } from "ws";
 
-import type { RenderPage, WebpubConfig } from "./types.js";
+import type { RenderPage, WebpubConfig, UrlPageMap } from "./types.js";
 import { build_content } from "./build-content.js";
 import { build_pages } from "./build-pages.js";
 import { openBrowser } from "./utils.js";
 
+const sockets: Set<WebSocket> = new Set();
+
+let urlPageMap: UrlPageMap = {};
 let config: WebpubConfig;
 let buildTimeout: NodeJS.Timeout | null = null;
 let buildInProgress = false;
 let buildCompletedAt = Date.now();
-const sockets: Set<WebSocket> = new Set();
 
 const LIVE_RELOAD_SNIPPET = `
 <script>
@@ -51,7 +53,7 @@ export async function runBuild(): Promise<void> {
 		await build_content(config);
 
 		console.log("\n# Running build_pages");
-		await build_pages(config);
+		urlPageMap = await build_pages(config);
 
 		console.timeEnd("Rebuild");
 		console.log("\n# Build complete.");
@@ -198,19 +200,23 @@ function injectReloadSnippet(html: string): string {
 const PAGE_LOGGER_SNIPPET = (page: RenderPage): string => `
 <script>
 	// show available data in the console
-	const { content, ...data2 } = ${JSON.stringify(page)};
-	console.log("Parsed data2:", data2);
+	const { content, ...data } = ${JSON.stringify(page)};
+	console.log("[inject] Parsed data:", data);
 </script>
 `;
 
 function injectPageLogger(url: URL, html: string): string {
-	console.log("injectPageLogger", URL, url.pathname);
+	const page: RenderPage = urlPageMap[url.pathname];
+	// console.log("injectPageLogger page", url, url.pathname, page);
 
-	// if (html.includes("</body>")) {
-	// 	return html.replace("</body>", `${LIVE_RELOAD_SNIPPET}</body>`);
-	// }
-	// return html + LIVE_RELOAD_SNIPPET;
-	return html;
+	if (!page) return html;
+
+	const loggerSnippet = PAGE_LOGGER_SNIPPET(page);
+
+	if (html.includes("</body>")) {
+		return html.replace("</body>", `${loggerSnippet}</body>`);
+	}
+	return html + loggerSnippet;
 }
 
 function getContentType(filePath: string): string {

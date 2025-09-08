@@ -7,12 +7,13 @@ import {
 	type WebpubConfig,
 	type TreeNode,
 	type RenderPage,
+	type UrlPageMap,
 	WebpubHooks,
 } from "./types.js";
 import { copyDirSync } from "./utils.js";
 import { buildTree } from "./build-tree.js";
 
-export async function build_pages(config: WebpubConfig): Promise<void> {
+export async function build_pages(config: WebpubConfig): Promise<UrlPageMap> {
 	// todo: discuss,
 	marked.setOptions(config.marked_options);
 
@@ -41,9 +42,7 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
 	);
 
 	const tree = buildTree(content);
-	// console.log("tree:", tree);
-
-	await walkAndBuild(tree, null, config);
+	const pageData = await walkAndBuild({}, tree, null, config);
 
 	console.log("");
 	console.timeEnd(buildPagesMessage);
@@ -56,9 +55,12 @@ export async function build_pages(config: WebpubConfig): Promise<void> {
 		join(config.output_directory, "assets"),
 	);
 	console.timeEnd(copyAssetsMessage);
+
+	return pageData;
 }
 
 async function walkAndBuild(
+	pageData: UrlPageMap,
 	node: TreeNode,
 	parent: TreeNode | null,
 	config: WebpubConfig,
@@ -95,6 +97,7 @@ async function walkAndBuild(
 	};
 
 	// console.log("currentPage:", currentPage);
+	pageData[node.url] = currentPage;
 
 	// render template
 	const output = `${config.theme.render(config, currentPage)}`;
@@ -103,8 +106,10 @@ async function walkAndBuild(
 
 	// recurse into children
 	for (const child of node.children) {
-		await walkAndBuild(child, node, config);
+		await walkAndBuild(pageData, child, node, config);
 	}
+
+	return pageData;
 }
 
 function toLiteNode(node: TreeNode, parent: string | null): RenderPage {
