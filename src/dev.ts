@@ -4,7 +4,7 @@ import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { WebSocketServer, type WebSocket } from "ws";
 
-import type { WebpubConfig } from "./types.js";
+import type { RenderPage, WebpubConfig } from "./types.js";
 import { build_content } from "./build-content.js";
 import { build_pages } from "./build-pages.js";
 import { openBrowser } from "./utils.js";
@@ -25,6 +25,14 @@ const LIVE_RELOAD_SNIPPET = `
   })();
 </script>
 `;
+
+// const PAGE_LOGGER_SNIPPET = (page: RenderPage): string => `
+// <script>
+// 	// show available data in the console
+// 	const { content, ...data2 } = ${JSON.stringify(page)};
+// 	console.log("Parsed data2:", data2);
+// </script>
+// `;
 
 export function setConfig(_config: WebpubConfig) {
 	config = _config;
@@ -123,6 +131,7 @@ export function startDevServer(): void {
 				if (filePath.endsWith(".html")) {
 					let html = content.toString("utf8");
 					html = injectReloadSnippet(html);
+					html = injectPageLogger(url, html);
 					res.writeHead(200, { "Content-Type": contentType });
 					res.end(html);
 					return;
@@ -184,6 +193,24 @@ function injectReloadSnippet(html: string): string {
 		return html.replace("</body>", `${LIVE_RELOAD_SNIPPET}</body>`);
 	}
 	return html + LIVE_RELOAD_SNIPPET;
+}
+
+const PAGE_LOGGER_SNIPPET = (page: RenderPage): string => `
+<script>
+	// show available data in the console
+	const { content, ...data2 } = ${JSON.stringify(page)};
+	console.log("Parsed data2:", data2);
+</script>
+`;
+
+function injectPageLogger(url: URL, html: string): string {
+	console.log("injectPageLogger", URL, url.pathname);
+
+	// if (html.includes("</body>")) {
+	// 	return html.replace("</body>", `${LIVE_RELOAD_SNIPPET}</body>`);
+	// }
+	// return html + LIVE_RELOAD_SNIPPET;
+	return html;
 }
 
 function getContentType(filePath: string): string {
