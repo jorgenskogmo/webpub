@@ -101,17 +101,25 @@ async function walkAndBuild(
 
   // --- Vite build integration ---
   const viteConfigPath = join(process.cwd(), "vite.config.ts");
-
   if (existsSync(viteConfigPath)) {
-    console.log(">>> Detected vite.config.ts, running Vite build...");
-    const { execSync } = await import("node:child_process");
-    try {
-      execSync(`npx vite build --config ${viteConfigPath}`, {
-        stdio: "inherit",
-      });
-    } catch (err) {
-      console.error("Vite build failed:", err);
-    }
+    console.log(
+      ">>> Detected vite.config.ts in project root, running Vite build asynchronously..."
+    );
+    const { exec } = await import("node:child_process");
+    await new Promise((resolve, reject) => {
+      exec(
+        `npx vite build --config ${viteConfigPath}`,
+        {},
+        (error: Error | null, stdout: string, stderr: string) => {
+          if (error) {
+            console.error("Vite build failed:", error);
+            reject(error);
+          } else {
+            resolve(stdout);
+          }
+        }
+      );
+    });
   }
 
   // render template
