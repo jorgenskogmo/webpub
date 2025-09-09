@@ -47,11 +47,12 @@
     "pub": "npm run clean && npm version patch && npm run build && npm pack"
   },
   "dependencies": {
-    "marked": "^16.2.0",
-    "js-yaml": "^4.1.0",
     "glob": "11.0.3",
-    "ws": "^8.18.3",
-    "sharp": "^0.34.3"
+    "js-yaml": "^4.1.0",
+    "marked": "^16.2.0",
+    "sharp": "^0.34.3",
+    "vite": "^7.1.5",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@types/bun": "^1.2.21",
