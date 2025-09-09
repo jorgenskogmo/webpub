@@ -14,77 +14,79 @@ import { srcsetPlugin } from "./plugins/srcset/index.js";
 const configFileName = "webpub.config.ts";
 
 const config: WebpubConfig = {
-	name: "webpub default",
-	version: "0.0.1",
-	content_directory: join(process.cwd(), "content"),
-	output_directory: join(process.cwd(), "site"),
-	theme_directory: join(import.meta.dirname, "themes/default"),
+  name: "webpub default",
+  version: "0.0.1",
+  content_directory: join(process.cwd(), "content"),
+  output_directory: join(process.cwd(), "site"),
+  theme_directory: join(import.meta.dirname, "themes/default"),
 
-	theme: defaultTheme,
-	plugins: [srcsetPlugin],
+  theme: defaultTheme,
+  plugins: [srcsetPlugin],
 
-	marked_options: { gfm: true, breaks: true },
-	open_browser: true,
-	devserver_enabled: true,
-	devserver_port: 3000,
+  marked_options: { gfm: true, breaks: true },
+  open_browser: true,
+  devserver_enabled: true,
+  devserver_port: 3000,
+
+  bundle_entry: false, // set to a string to enable bundling
 };
 
 export async function defineConfig(conf: WebpubOptions) {
-	Object.assign(config, conf);
+  Object.assign(config, conf);
 
-	if (conf.theme_directory) {
-		config.theme_directory = join(process.cwd(), config.theme_directory);
-	}
+  if (conf.theme_directory) {
+    config.theme_directory = join(process.cwd(), config.theme_directory);
+  }
 
-	if (!existsSync(config.content_directory)) {
-		console.error(
-			`webpub: Content directory not found ${config.content_directory}`,
-		);
-		process.exit(1);
-	}
+  if (!existsSync(config.content_directory)) {
+    console.error(
+      `webpub: Content directory not found ${config.content_directory}`
+    );
+    process.exit(1);
+  }
 
-	start(config);
+  start(config);
 }
 
 // called by cli
 export async function main() {
-	const configPath = join(process.cwd(), configFileName);
-	if (existsSync(configPath)) {
-		// config file found. The config file will call defineConfig, then start()
-		await import(configPath);
-	} else {
-		// run with default config
-		console.log(`webpub: '${configFileName}' file not found. Using defaults.`);
-		defineConfig(config);
-	}
+  const configPath = join(process.cwd(), configFileName);
+  if (existsSync(configPath)) {
+    // config file found. The config file will call defineConfig, then start()
+    await import(configPath);
+  } else {
+    // run with default config
+    console.log(`webpub: '${configFileName}' file not found. Using defaults.`);
+    defineConfig(config);
+  }
 }
 
 async function start(config: WebpubConfig) {
-	// console.log("webpub: start()");
-	// console.log("webpub: start() config:", config);
+  // console.log("webpub: start()");
+  // console.log("webpub: start() config:", config);
 
-	const pkgUrl = join(import.meta.dirname, "../package.json");
-	const { version } = JSON.parse(await readFile(pkgUrl, "utf-8"));
-	console.log(`# webpub version: ${version} starting`);
+  const pkgUrl = join(import.meta.dirname, "../package.json");
+  const { version } = JSON.parse(await readFile(pkgUrl, "utf-8"));
+  console.log(`# webpub version: ${version} starting`);
 
-	if (!config) {
-		console.error("webpub.start: missing configuration");
-		return;
-	}
+  if (!config) {
+    console.error("webpub.start: missing configuration");
+    return;
+  }
 
-	setConfig(config);
-	cleanDestinationDirectory(config);
+  setConfig(config);
+  cleanDestinationDirectory(config);
 
-	if (!config.devserver_enabled) {
-		console.log("# Running in build-only mode...");
-		await runBuild();
-		return;
-	}
+  if (!config.devserver_enabled) {
+    console.log("# Running in build-only mode...");
+    await runBuild();
+    return;
+  }
 
-	startWatcher();
-	startDevServer();
+  startWatcher();
+  startDevServer();
 
-	setTimeout(() => {
-		runBuild();
-	}, 10);
+  setTimeout(() => {
+    runBuild();
+  }, 10);
 }
