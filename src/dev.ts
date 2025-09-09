@@ -32,32 +32,6 @@ export function setConfig(_config: WebpubConfig) {
   config = _config;
 }
 
-/**
- * Generates vite.config.ts based on the provided config.
- * Only generates if config.bundle_entry is a string (not false).
- */
-export function generateViteConfig(config: WebpubConfig) {
-  if (config.bundle_entry === false) return;
-  if (!config.bundle_entry) return;
-
-  const outDir = join(config.output_directory, "assets", "bundle");
-
-  const viteConfig = `import { defineConfig } from 'vite';
-export default defineConfig({
-  build: {
-	outDir: '${outDir}',
-	assetsDir: '',
-	rollupOptions: {
-	  input: '${config.bundle_entry}',
-	},
-  },
-  base: '/assets/bundle/',
-});
-`;
-
-  writeFileSync("vite.config.ts", viteConfig);
-}
-
 export async function runBuild(): Promise<void> {
   if (buildInProgress) {
     console.log("Build already running, skipping...");

@@ -17,8 +17,6 @@ export type WebpubOptions = {
   devserver_port?: number;
   devserver_enabled?: boolean;
 
-  // bundle entry for Vite integration:
-  bundle_entry?: false | string;
 };
 
 // internal:
@@ -31,7 +29,6 @@ export type WebpubConfig = WebpubOptions & {
   open_browser: boolean;
   devserver_port: number;
   devserver_enabled: boolean;
-  bundle_entry: false | string;
 };
 
 // todo: consider adding pre-, at- and post- hooks to both Page and Content loops

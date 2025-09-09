@@ -100,13 +100,15 @@ async function walkAndBuild(
   pageData[node.url] = currentPage;
 
   // --- Vite build integration ---
-  if (typeof config.bundle_entry === "string" && config.bundle_entry) {
+  const viteConfigPath = join(process.cwd(), "vite.config.ts");
+
+  if (existsSync(viteConfigPath)) {
+    console.log(">>> Detected vite.config.ts, running Vite build...");
     const { execSync } = await import("node:child_process");
     try {
-      execSync("npx vite build --config ./vite.config.ts", {
+      execSync(`npx vite build --config ${viteConfigPath}`, {
         stdio: "inherit",
       });
-      // Optionally copy/move output if needed
     } catch (err) {
       console.error("Vite build failed:", err);
     }

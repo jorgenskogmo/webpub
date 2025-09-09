@@ -27,8 +27,6 @@ const config: WebpubConfig = {
   open_browser: true,
   devserver_enabled: true,
   devserver_port: 3000,
-
-  bundle_entry: false, // set to a string to enable bundling
 };
 
 export async function defineConfig(conf: WebpubOptions) {
