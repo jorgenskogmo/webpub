@@ -4,7 +4,12 @@ import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { WebSocketServer, type WebSocket } from "ws";
 
-import type { RenderPage, WebpubConfig, UrlPageMap } from "./types.js";
+import type {
+  RenderPage,
+  WebpubConfig,
+  UrlPageMap,
+  ContentStructure,
+} from "./types.js";
 import { build_content } from "./build-content.js";
 import { build_pages } from "./build-pages.js";
 import { openBrowser } from "./utils.js";
@@ -42,10 +47,10 @@ export async function runBuild(): Promise<void> {
   try {
     console.time("Rebuild");
     console.log("\n# Running build_content");
-    await build_content(config);
+    const contentJson = await build_content(config);
 
     console.log("\n# Running build_pages");
-    urlPageMap = await build_pages(config);
+    urlPageMap = await build_pages(config, contentJson);
 
     console.timeEnd("Rebuild");
     console.log("\n# Build complete.");

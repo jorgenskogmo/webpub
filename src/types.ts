@@ -16,7 +16,6 @@ export type WebpubOptions = {
   open_browser?: boolean;
   devserver_port?: number;
   devserver_enabled?: boolean;
-
 };
 
 // internal:
@@ -60,6 +59,8 @@ export type Template = {
   foot: TemplateFunction;
   render: TemplateFunction;
 };
+
+export type ContentStructure = Record<string, Page>;
 
 export type Json =
   | string

@@ -9,27 +9,17 @@ import {
   type RenderPage,
   type UrlPageMap,
   WebpubHooks,
+  ContentStructure,
 } from "./types.js";
 import { copyDirSync } from "./utils.js";
 import { buildTree } from "./build-tree.js";
 
-export async function build_pages(config: WebpubConfig): Promise<UrlPageMap> {
+export async function build_pages(
+  config: WebpubConfig,
+  content: ContentStructure
+): Promise<UrlPageMap> {
   // todo: discuss,
   marked.setOptions(config.marked_options);
-
-  // load content from json store
-  let content: Record<string, Page> = {};
-  const contentJsonPath = join(config.content_directory, "content.json");
-  if (existsSync(contentJsonPath)) {
-    const contentJson = readFileSync(contentJsonPath, "utf-8");
-    // Safely parse to JSON
-    try {
-      content = JSON.parse(contentJson) as Record<string, Page>;
-    } catch (e) {
-      console.error("Failed to parse content.json:", e);
-      process.exit(3);
-    }
-  }
 
   // start rebuild timer
   const buildPagesMessage = "Rebuilt all pages";
