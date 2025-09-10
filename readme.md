@@ -1,4 +1,16 @@
-# WebPub
+# webpub
+
+A small website builder
+
+## Usage
+
+This repository only contains the tool itself.
+
+To use it, clone the [webpub-starter](https://github.com/jorgenskogmo/webpub-starter) and follow the instructions there.
+
+---
+
+## Developer documentation
 
 ## Requirements
 
@@ -15,20 +27,10 @@ bun --version # developed with 1.2.21
 bun install # equivalent to npm install, just faster
 ```
 
-## Usage
+## Cli
 
-Run the hot-reloading dev server with
+## Core
 
-```sh
-bun run src/webpub.ts
-````
+## Templates
 
-When a change is detected in any of the directories defined in webdev.config.ts, the site is rebuilt - and then reloaded.
-
-## Filesystem layout
-
-All these can be configured, @see: config
-
-- ./content : directories with index.md files (@see: content-files)
-- ./templates: html layouts
-- ./dist: the ready-to-be-deployed static website
+## Plugins

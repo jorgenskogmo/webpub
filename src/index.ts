@@ -29,12 +29,13 @@ const config: WebpubConfig = {
   open_browser: true,
   devserver_enabled: true,
   devserver_port: 3000,
+
+  webpub_isdev: process.argv.includes("dev"),
 };
 
 export async function defineConfig(conf: WebpubOptions) {
   const userPackageFile = join(process.cwd(), "package.json");
   const userPackage = JSON.parse(await readFile(userPackageFile, "utf-8"));
-  console.log(`>> userPackage:`, userPackage);
 
   if (!conf.name) config.name = userPackage.name || "webpub site";
   if (!conf.version) config.version = userPackage.version || "0.0.1";
@@ -73,8 +74,8 @@ export async function main() {
 }
 
 async function start(config: WebpubConfig) {
-  // console.log("webpub: start()");
   console.log("webpub: start() config:", config);
+  process.exit(1);
 
   console.log(`# webpub version: ${config.webpub_version} starting`);
 
