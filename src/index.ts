@@ -74,8 +74,7 @@ export async function main() {
 }
 
 async function start(config: WebpubConfig) {
-  console.log("webpub: start() config:", config);
-  process.exit(1);
+  // console.log("webpub: start() config:", config);
 
   console.log(`# webpub version: ${config.webpub_version} starting`);
 
@@ -87,7 +86,7 @@ async function start(config: WebpubConfig) {
   setConfig(config);
   cleanDestinationDirectory(config);
 
-  if (!config.devserver_enabled) {
+  if (!config.devserver_enabled || !config.webpub_isdev) {
     console.log("# Running in build-only mode...");
     await runBuild();
     return;
