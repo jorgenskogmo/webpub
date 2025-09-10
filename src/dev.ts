@@ -47,7 +47,7 @@ export async function runBuild(): Promise<void> {
   try {
     console.time("Rebuild");
     console.log("\n# Running build_content");
-    const contentJson = await build_content(config);
+    const contentJson: ContentStructure = await build_content(config);
 
     console.log("\n# Running build_pages");
     urlPageMap = await build_pages(config, contentJson);

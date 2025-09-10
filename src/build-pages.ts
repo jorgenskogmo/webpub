@@ -59,10 +59,18 @@ async function walkAndBuild(
 
   const dirPath = join(config.output_directory, node.url);
   const imagesDir = join(dirPath, "images");
-  mkdirSync(imagesDir, { recursive: true });
+  // mkdirSync(imagesDir, { recursive: true });
 
   // parse markdown → HTML
   let html = await marked.parse(node.page.content);
+
+  // create images directory if the page contains images
+  if (html.match(/<img[^>]+src=["']((?!https?:)[^"']+)["'][^>]*>/g)) {
+    if (!existsSync(imagesDir)) {
+      console.log("  - creating images directory:", imagesDir);
+      mkdirSync(imagesDir, { recursive: true });
+    }
+  }
 
   // process plugins
   for (const plugin of config.plugins) {

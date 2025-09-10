@@ -55,7 +55,6 @@
     "ws": "^8.18.3"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
     "@types/js-yaml": "^4.0.9",
     "@types/ws": "^8.18.1",
     "typescript": "^5.9.2"

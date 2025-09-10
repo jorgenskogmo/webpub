@@ -5,20 +5,20 @@ import sharp from "sharp";
 
 import { type WebpubConfig, type Plugin, WebpubHooks } from "../../types.js";
 
-const PLUGIN_COMPLETE_MESSAGE = "srcset plugin complete";
+const PLUGIN_COMPLETE_MESSAGE = "img plugin complete";
 const IMAGE_REGEX_HTML = /<img[^>]+src=["']((?!https?:)[^"']+)["'][^>]*>/g;
 
 export const hook = WebpubHooks.BUILD_PAGE;
 
-export type srcsetOptions = {
+export type imgOptions = {
   image_widths: number[];
 };
 
-const options: srcsetOptions = {
-  image_widths: [200, 400, 800, 1000, 1200],
+const options: imgOptions = {
+  image_widths: [1200],
 };
 
-export const configure = (opts: Partial<srcsetOptions>) => {
+export const configure = (opts: Partial<imgOptions>) => {
   Object.assign(options, opts);
 };
 
@@ -57,19 +57,9 @@ export const run = async (
           }
         }
 
-        // compose src-sets for <img> elements using the resized images created above
-        // todo: consider <picture> elements?
-        const srcsetAttr = options.image_widths
-          .map(
-            (width) =>
-              `images/${findEntryByPrefix(`w${width}`, srcImages)} ${width}w`
-          )
-          .join(", ");
-
         const imgTagWithSrcSet = `<img \
             alt="${attrs.alt || "no alt text available"}" \
-            src="images/${findEntryByPrefix("w150", srcImages)}" \
-            srcset="${srcsetAttr}" />`;
+            src="images/${findEntryByPrefix("w1200", srcImages)}" />`;
 
         newHtml = newHtml.replace(imgTag, imgTagWithSrcSet);
       }
@@ -93,9 +83,7 @@ function findEntryByPrefix(prefix: string, arr: string[]): string | undefined {
   return arr.find((entry) => entry.startsWith(prefix));
 }
 
-// export default { hook, configure, run } as Plugin;
-
-export const srcsetPlugin: Plugin<srcsetOptions> = {
+export const imgPlugin: Plugin<imgOptions> = {
   hook,
   run,
   configure,

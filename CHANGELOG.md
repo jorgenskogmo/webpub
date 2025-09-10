@@ -18,12 +18,18 @@ fix(webpub): read name, version from user package.json
 
 feat(webpub): obey 'dev' or 'build' (default) mode
 
+## 0.1.59
+
+fix(webpub): dont create image dir if no images
+feat(webpub): decide how to handle image(s) when the srcset plugin is not used -> imgPlugin
+feat(webpub): include imgPlugin by default
+
 ---
 
 ## TODO
 
-- feat(webpub) [srcset plugin]: image_formats: ["jpeg", "webp", "avif"],
-- TODO: decide how to handle image(s) when there srcset plugin is not used
-- TODO: dont create image dir if no images
-- TODO: consider if (the optional) vite.config.ts should live in the theme dir (not root)
+- feat(webpub) [srcset plugin][img plugin]: image_formats: ["jpeg", "webp", "avif"] -> only for <picture>?
+
+- TODO: consider if (the optional) vite.config.ts should live in the template dir that uses it (not root)?
+
 - TODO: Make 'collection' plugin (aka tags, categories, series, etc) that supports listing pages and filtering

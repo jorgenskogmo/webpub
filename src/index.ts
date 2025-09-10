@@ -9,7 +9,9 @@ import type { WebpubConfig, WebpubOptions } from "./types.js";
 export * from "./types.js";
 
 import * as defaultTheme from "./themes/default/index.js";
+import { imgPlugin } from "./plugins/img/index.js";
 import { srcsetPlugin } from "./plugins/srcset/index.js";
+// import { srcsetPlugin } from "./plugins/srcset/index.js";
 
 const configFileName = "webpub.config.ts";
 
@@ -23,7 +25,7 @@ const config: WebpubConfig = {
   theme_directory: join(import.meta.dirname, "themes/default"),
 
   theme: defaultTheme,
-  plugins: [srcsetPlugin],
+  plugins: [imgPlugin],
 
   marked_options: { gfm: true, breaks: true },
   open_browser: true,
@@ -40,7 +42,15 @@ export async function defineConfig(conf: WebpubOptions) {
   if (!conf.name) config.name = userPackage.name || "webpub site";
   if (!conf.version) config.version = userPackage.version || "0.0.1";
 
+  // remove the default imgPlugin if srcsetPlugin is used
+  if (conf.plugins?.includes(srcsetPlugin)) {
+    console.log("webpub: srcsetPlugin detected in config");
+    // config.plugins.remove(imgPlugin);
+    config.plugins = config.plugins.filter((p) => p !== imgPlugin);
+  }
+
   Object.assign(config, conf);
+  console.log("webpub: plugins:", config.plugins);
 
   const packageFile = join(import.meta.dirname, "../package.json");
   const packageJson = JSON.parse(await readFile(packageFile, "utf-8"));
