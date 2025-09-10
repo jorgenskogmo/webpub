@@ -13,7 +13,7 @@ import { imgPlugin } from "./plugins/img/index.js";
 import { srcsetPlugin } from "./plugins/srcset/index.js";
 // import { srcsetPlugin } from "./plugins/srcset/index.js";
 
-const configFileName = "webpub.config.ts";
+const configFileName = "webpub.config.js";
 
 const config: WebpubConfig = {
   name: "", // will be set in defineConfig()

@@ -24,6 +24,10 @@ fix(webpub): dont create image dir if no images
 feat(webpub): decide how to handle image(s) when the srcset plugin is not used -> imgPlugin
 feat(webpub): include imgPlugin by default
 
+## 0.1.60
+
+chore(webpub): run with node (not bun), rename config file to webpub.config.js
+
 ---
 
 ## TODO
