@@ -57,31 +57,29 @@ async function walkAndBuild(
 ) {
   console.log("\n+ Building page for URL:", node.url);
 
+  // Create the directory for the current page
   const dirPath = join(config.output_directory, node.url);
   mkdirSync(dirPath, { recursive: true });
-  //
-  const imagesDir = join(dirPath, "images");
-  // mkdirSync(imagesDir, { recursive: true });
 
   // parse markdown → HTML
   let html = await marked.parse(node.page.content);
 
   // create images directory if the page contains images
   if (html.match(/<img[^>]+src=["']((?!https?:)[^"']+)["'][^>]*>/g)) {
+    const imagesDir = join(dirPath, "images");
     if (!existsSync(imagesDir)) {
-      console.log("  - creating images directory:", imagesDir);
       mkdirSync(imagesDir, { recursive: true });
     }
   }
 
-  // process plugins
+  // Process plugins
   for (const plugin of config.plugins) {
     if (plugin.hook === WebpubHooks.BUILD_PAGE) {
       html = await plugin.run(config, node.url, html);
     }
   }
 
-  // build lightweight children recursively
+  // Build lightweight children recursively
   const childrenLite: RenderPage[] = node.children.map((child) =>
     toLiteNode(child, node.url)
   );
@@ -96,9 +94,9 @@ async function walkAndBuild(
     children: childrenLite,
   };
 
-  // console.log("currentPage:", currentPage);
   pageData[node.url] = currentPage;
 
+  // TODO: Check that this works without Bun
   // --- Vite build integration ---
   const viteConfigPath = join(process.cwd(), "vite.config.ts");
   if (existsSync(viteConfigPath)) {
