@@ -16,6 +16,8 @@ const configFileName = "webpub.config.ts";
 const config: WebpubConfig = {
   name: "webpub default",
   version: "0.0.1",
+  webpub_version: "0.0.0-alpha",
+
   content_directory: join(process.cwd(), "content"),
   output_directory: join(process.cwd(), "site"),
   theme_directory: join(import.meta.dirname, "themes/default"),
@@ -43,6 +45,17 @@ export async function defineConfig(conf: WebpubOptions) {
     process.exit(1);
   }
 
+  const userPackageFile = join(process.cwd(), "package.json");
+  const userPackage = JSON.parse(await readFile(userPackageFile, "utf-8"));
+  console.log(`>> userPackage:`, userPackage);
+
+  if (!config.name) config.name = userPackage.name || "webpub site";
+  if (!config.version) config.version = userPackage.version || "0.0.1";
+
+  const packageFile = join(import.meta.dirname, "../package.json");
+  const packageJson = JSON.parse(await readFile(packageFile, "utf-8"));
+  if (packageJson.version) config.webpub_version = packageJson.version;
+
   start(config);
 }
 
@@ -61,11 +74,9 @@ export async function main() {
 
 async function start(config: WebpubConfig) {
   // console.log("webpub: start()");
-  // console.log("webpub: start() config:", config);
+  console.log("webpub: start() config:", config);
 
-  const pkgUrl = join(import.meta.dirname, "../package.json");
-  const { version } = JSON.parse(await readFile(pkgUrl, "utf-8"));
-  console.log(`# webpub version: ${version} starting`);
+  console.log(`# webpub version: ${config.webpub_version} starting`);
 
   if (!config) {
     console.error("webpub.start: missing configuration");

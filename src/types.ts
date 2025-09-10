@@ -28,6 +28,8 @@ export type WebpubConfig = WebpubOptions & {
   open_browser: boolean;
   devserver_port: number;
   devserver_enabled: boolean;
+
+  webpub_version: string;
 };
 
 // todo: consider adding pre-, at- and post- hooks to both Page and Content loops
