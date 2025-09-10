@@ -2,12 +2,12 @@ import type { MarkedOptions } from "marked";
 
 // public:
 export type WebpubOptions = {
-  name: string;
-  version: string;
   content_directory: string;
-  output_directory: string;
 
   // has defaults:
+  output_directory?: string;
+  name?: string;
+  version?: string;
   theme_directory?: string;
   plugins?: Plugin[];
 
@@ -20,6 +20,12 @@ export type WebpubOptions = {
 
 // internal:
 export type WebpubConfig = WebpubOptions & {
+  name: string;
+  version: string;
+
+  output_directory: string;
+  content_directory: string;
+
   theme: Template;
   theme_directory: string;
   plugins: Plugin[];

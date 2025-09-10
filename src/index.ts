@@ -14,8 +14,8 @@ import { srcsetPlugin } from "./plugins/srcset/index.js";
 const configFileName = "webpub.config.ts";
 
 const config: WebpubConfig = {
-  name: "webpub default",
-  version: "0.0.1",
+  name: "", // will be set in defineConfig()
+  version: "", // will be set in defineConfig()
   webpub_version: "0.0.0-alpha",
 
   content_directory: join(process.cwd(), "content"),
@@ -32,7 +32,18 @@ const config: WebpubConfig = {
 };
 
 export async function defineConfig(conf: WebpubOptions) {
+  const userPackageFile = join(process.cwd(), "package.json");
+  const userPackage = JSON.parse(await readFile(userPackageFile, "utf-8"));
+  console.log(`>> userPackage:`, userPackage);
+
+  if (!conf.name) config.name = userPackage.name || "webpub site";
+  if (!conf.version) config.version = userPackage.version || "0.0.1";
+
   Object.assign(config, conf);
+
+  const packageFile = join(import.meta.dirname, "../package.json");
+  const packageJson = JSON.parse(await readFile(packageFile, "utf-8"));
+  if (packageJson.version) config.webpub_version = packageJson.version;
 
   if (conf.theme_directory) {
     config.theme_directory = join(process.cwd(), config.theme_directory);
@@ -44,17 +55,6 @@ export async function defineConfig(conf: WebpubOptions) {
     );
     process.exit(1);
   }
-
-  const userPackageFile = join(process.cwd(), "package.json");
-  const userPackage = JSON.parse(await readFile(userPackageFile, "utf-8"));
-  console.log(`>> userPackage:`, userPackage);
-
-  if (!config.name) config.name = userPackage.name || "webpub site";
-  if (!config.version) config.version = userPackage.version || "0.0.1";
-
-  const packageFile = join(import.meta.dirname, "../package.json");
-  const packageJson = JSON.parse(await readFile(packageFile, "utf-8"));
-  if (packageJson.version) config.webpub_version = packageJson.version;
 
   start(config);
 }
