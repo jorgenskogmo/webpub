@@ -36,10 +36,17 @@ fix(webpub): dont create image dir if no images
 
 ## Backlog
 
-- fix "URL: "/./" -> "/"
+- fix(webpub) [data] "URL: "/./" -> "/"
 
-- feat(webpub) [srcset plugin][img plugin]: image_formats: ["jpeg", "webp", "avif"] -> only for <picture>?
+- feat(webpub) [srcset+img plugin]: image_formats: ["jpeg", "webp", "avif"] -> only for picture-tag ?
 
-- TODO: consider if (the optional) vite.config.ts should live in the template dir that uses it (not root)?
+- fix(webpub): [bundler] consider if (the optional) vite.config.ts should live in the template dir that uses it (not root)?
 
-- TODO: Make 'collection' plugin (aka tags, categories, series, etc) that supports listing pages and filtering
+- feat(webpub): [plugin] Make 'collection' plugin (aka tags, categories, series, etc) that supports listing pages and filtering
+
+- feat(webpub): [frontmatter] might specify thumbnail
+
+- feat(webpub): [template]: default page template is main()
+  lets follow a convention where page.url (e.g. "projects") would look for a render method
+  called renderProjects(config, page) in this file
+  if found, use that instead of main()....
