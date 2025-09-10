@@ -22,7 +22,7 @@ feat(webpub): obey 'dev' or 'build' (default) mode
 
 ## TODO
 
-- TODO: srcset plugin: image_formats: ["jpeg", "webp", "avif"],
+- feat(webpub) [srcset plugin]: image_formats: ["jpeg", "webp", "avif"],
 - TODO: decide how to handle image(s) when there srcset plugin is not used
 - TODO: dont create image dir if no images
 - TODO: consider if (the optional) vite.config.ts should live in the theme dir (not root)
