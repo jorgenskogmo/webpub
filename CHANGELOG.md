@@ -32,6 +32,8 @@ chore(webpub): run with node (not bun), rename config file to webpub.config.js
 
 ## TODO
 
+- fix "URL: "/./" -> "/"
+
 - feat(webpub) [srcset plugin][img plugin]: image_formats: ["jpeg", "webp", "avif"] -> only for <picture>?
 
 - TODO: consider if (the optional) vite.config.ts should live in the template dir that uses it (not root)?

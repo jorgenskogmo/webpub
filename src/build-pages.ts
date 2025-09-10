@@ -58,6 +58,8 @@ async function walkAndBuild(
   console.log("\n+ Building page for URL:", node.url);
 
   const dirPath = join(config.output_directory, node.url);
+  mkdirSync(dirPath, { recursive: true });
+  //
   const imagesDir = join(dirPath, "images");
   // mkdirSync(imagesDir, { recursive: true });
 
