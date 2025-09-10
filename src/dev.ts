@@ -55,7 +55,7 @@ export async function runBuild(): Promise<void> {
     console.timeEnd("Rebuild");
     console.log("\n# Build complete.");
 
-    if (config.devserver_enabled) {
+    if (config.devserver_enabled && config.webpub_isdev) {
       console.log("# Reloading clients...\n");
       for (const ws of sockets) {
         try {

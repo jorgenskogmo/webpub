@@ -14,6 +14,10 @@ feat(webpub): content.json should NOT be in content
 
 fix(webpub): read name, version from user package.json
 
+## 0.1.57
+
+feat(webpub): obey 'dev' or 'build' (default) mode
+
 ---
 
 ## TODO
