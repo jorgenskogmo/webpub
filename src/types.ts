@@ -52,6 +52,7 @@ export type PluginFunction = (
 ) => Promise<string>;
 
 export type Plugin<TConfig = unknown> = {
+  name: string;
   hook: WebpubHooks;
   run: PluginFunction;
   configure: (opts: Partial<TConfig>) => void;

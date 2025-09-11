@@ -5,7 +5,8 @@ import sharp from "sharp";
 
 import { type WebpubConfig, type Plugin, WebpubHooks } from "../../types.js";
 
-const PLUGIN_COMPLETE_MESSAGE = "srcset plugin complete";
+const PLUGIN_NAME = "webpub/srcset";
+const PLUGIN_COMPLETE_MESSAGE = `${PLUGIN_NAME} plugin complete`;
 const IMAGE_REGEX_HTML = /<img[^>]+src=["']((?!https?:)[^"']+)["'][^>]*>/g;
 
 export const hook = WebpubHooks.BUILD_PAGE;
@@ -27,7 +28,7 @@ export const run = async (
   url: string,
   html: string
 ): Promise<string> => {
-  console.log("- plugin:srcset, processing url:", url);
+  console.log(`- plugin:${PLUGIN_NAME}, processing url:`, url);
   console.time(PLUGIN_COMPLETE_MESSAGE);
   const imgElements = html.match(IMAGE_REGEX_HTML);
 
@@ -96,6 +97,7 @@ function findEntryByPrefix(prefix: string, arr: string[]): string | undefined {
 // export default { hook, configure, run } as Plugin;
 
 export const srcsetPlugin: Plugin<srcsetOptions> = {
+  name: PLUGIN_NAME,
   hook,
   run,
   configure,
