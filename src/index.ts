@@ -5,15 +5,17 @@ import { readFile } from "node:fs/promises";
 import { runBuild, startDevServer, startWatcher, setConfig } from "./dev.js";
 import { cleanDestinationDirectory } from "./utils.js";
 import type { WebpubConfig, WebpubOptions } from "./types.js";
+import { logger } from "./logger.js";
 
 export * from "./types.js";
+export * from "./logger.js";
 
 import { imgPlugin } from "./plugins/img/index.js";
-import { srcsetPlugin } from "./plugins/srcset/index.js";
-// import { srcsetPlugin } from "./plugins/srcset/index.js";
 
 const CONFIG_FILENAME = "webpub.config.js";
 const BUNLDE_FILENAME = "webpub-bundle-entry.ts";
+
+logger.level = 1;
 
 export async function defineConfig(userConfig?: WebpubOptions) {
 	const packageFile = join(import.meta.dirname, "../package.json");
@@ -29,12 +31,11 @@ export async function defineConfig(userConfig?: WebpubOptions) {
 		version: userPackage.version || "0.0.1",
 		content_directory: "example/content",
 		output_directory: "site",
-		// theme_directory: "example/templates-qdi", // TODO: Make this the default
 		theme_directory: "src/templates/default", // TODO: Make this the default
 		site: {},
 		plugins: [imgPlugin],
 		marked_options: { gfm: true, breaks: true },
-		open_browser: true,
+		open_browser: false,
 		devserver_enabled: isDev,
 		devserver_port: 3000,
 		webpub_version: packageJson.version || "0.0.1",
@@ -44,24 +45,24 @@ export async function defineConfig(userConfig?: WebpubOptions) {
 
 	const config: WebpubConfig = Object.assign(defaults, userConfig || {});
 
-	console.log("webpub: configuring build for", config.name, config.version);
+	logger.info("Configuring build for", config.name, config.version);
 
 	// FIXME: plugin incompatability handling should be WAY more robust
 	// remove the default imgPlugin if srcsetPlugin is used
-	if (userConfig?.plugins?.includes(srcsetPlugin)) {
-		console.log("webpub: srcsetPlugin detected in config");
+	if (config.plugins.filter((p) => p.name === "webpub/srcset").length > 1) {
+		logger.info("webpub: srcsetPlugin detected in config, removing imgPlugin");
 		config.plugins = config.plugins?.filter((p) => p !== imgPlugin);
 	}
 
-	console.log("webpub: plugins:", config.plugins);
+	logger.debug("webpub: plugins:", config.plugins);
 
 	config.content_directory = join(process.cwd(), config.content_directory);
 	config.output_directory = join(process.cwd(), config.output_directory);
 	config.theme_directory = join(process.cwd(), config.theme_directory);
 
 	if (!existsSync(config.content_directory)) {
-		console.error(
-			`webpub: Content directory not found ${config.content_directory}`,
+		logger.error(
+			`Content directory not found: '${config.content_directory}'. Exiting.`,
 		);
 		process.exit(1);
 	}
@@ -77,18 +78,17 @@ export async function main() {
 		await import(configPath);
 	} else {
 		// run with default config
-		console.log(`webpub: '${CONFIG_FILENAME}' file not found. Using defaults.`);
+		logger.warn(`'${CONFIG_FILENAME}' file not found. Using defaults.`);
 		defineConfig();
 	}
 }
 
 async function start(config: WebpubConfig) {
-	console.log("webpub: start() config:", config);
-
-	console.log(`# webpub version: ${config.webpub_version} starting`);
+	logger.debug("webpub: start() config:", config);
+	logger.start(`webpub v${config.webpub_version} starting`);
 
 	if (!config) {
-		console.error("webpub.start: missing configuration");
+		logger.error("webpub.start: missing configuration. Exiting.");
 		return;
 	}
 
@@ -96,7 +96,7 @@ async function start(config: WebpubConfig) {
 	cleanDestinationDirectory(config);
 
 	if (!config.devserver_enabled || !config.webpub_isdev) {
-		console.log("# Running in build-only mode...");
+		logger.info("Running in build-only mode...");
 		await runBuild();
 		return;
 	}

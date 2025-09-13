@@ -47,10 +47,12 @@
     "pub": "npm run clean && npm version patch && npm run build && npm pack"
   },
   "dependencies": {
+    "consola": "^3.4.2",
     "glob": "11.0.3",
     "js-yaml": "^4.1.0",
     "marked": "^16.2.0",
     "sharp": "^0.34.3",
+    "strip-ansi": "^7.1.2",
     "vite": "^7.1.5",
     "ws": "^8.18.3"
   },

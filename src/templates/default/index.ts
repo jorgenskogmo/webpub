@@ -6,7 +6,8 @@ export const head = (config: WebpubConfig, _page: RenderPage) => `<!DOCTYPE html
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>${config.name} ${config.version}</title>
-      <link rel="stylesheet" href="/assets/entry.css" />
+      <link rel="stylesheet" href="/assets/styles.css" />
+      <!-- <link rel="stylesheet" href="/assets/webpub-bundle/entry.css" /> -->
       <script type="module" src="/assets/webpub-bundle/entry.js"></script>
     </head>
   `;

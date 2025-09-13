@@ -3,12 +3,14 @@ import { join, relative, dirname, sep } from "node:path";
 import { glob } from "glob";
 import yaml from "js-yaml";
 
+import { logger } from "./logger.js";
+
 import type { Json, Page, WebpubConfig, ContentStructure } from "./types.js";
 
 export async function build_content(
 	config: WebpubConfig,
 ): Promise<ContentStructure> {
-	console.log("+ Building content");
+	logger.start("+ Building content");
 	console.time("Build content");
 
 	// Find all index.md files in the content directory
@@ -21,7 +23,7 @@ export async function build_content(
 		const pathArr = dirname(rel).split(sep).filter(Boolean);
 		const url = `/${pathArr.join("/")}/`;
 
-		console.log("- indexing", rel);
+		logger.info("- indexing", rel);
 		const content = await readFile(file, "utf8");
 		const { frontmatter, markdown } = extractFrontmatter(content);
 
@@ -29,7 +31,7 @@ export async function build_content(
 	}
 
 	console.timeEnd("Build content");
-	console.log(`Done. Indexed ${indexFiles.length} pages.`);
+	logger.success("Indexed", indexFiles.length, "pages");
 
 	return structure;
 }
