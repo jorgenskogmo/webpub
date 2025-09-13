@@ -42,49 +42,6 @@ export type WebpubConfig = WebpubOptions & {
 	webpub_bundle_filename: string;
 };
 
-// // public:
-// export type WebpubOptions = {
-// 	content_directory: string;
-
-// 	// has defaults:
-// 	output_directory?: string;
-// 	theme_directory?: string;
-// 	plugins?: Plugin[];
-
-// 	// optional:
-// 	marked_options?: MarkedOptions;
-// 	open_browser?: boolean;
-// 	devserver_port?: number;
-// 	devserver_enabled?: boolean;
-
-// 	site?: Json;
-// };
-
-// // internal:
-// export type WebpubConfig = WebpubOptions & {
-// 	name: string;
-// 	version: string;
-
-// 	output_directory: string;
-// 	content_directory: string;
-
-// 	theme?: Template;
-// 	theme_directory: string;
-// 	plugins: Plugin[];
-
-// 	marked_options: MarkedOptions;
-// 	open_browser: boolean;
-// 	devserver_port: number;
-// 	devserver_enabled: boolean;
-
-// 	webpub_version: string;
-// 	webpub_isdev: boolean;
-
-// 	// arbitrary data that plugins or themes can use
-// 	// e.g. user provided site-wide metadata
-// 	site: Json;
-// };
-
 // todo: consider adding pre-, at- and post- hooks to both Page and Content loops
 export enum WebpubHooks {
 	BUILD_PAGE = 0,
