@@ -4,7 +4,7 @@ import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { marked } from "marked";
 import stripAnsi from "strip-ansi";
 
-import { logger } from "./logger";
+import { logger } from "./logger.js";
 
 import {
 	type WebpubConfig,
