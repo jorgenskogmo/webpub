@@ -15,7 +15,7 @@ import { imgPlugin } from "./plugins/img/index.js";
 const CONFIG_FILENAME = "webpub.config.js";
 const BUNLDE_FILENAME = "webpub-bundle-entry.ts";
 
-logger.level = 1;
+logger.level = 3;
 
 export async function defineConfig(userConfig?: WebpubOptions) {
 	const packageFile = join(import.meta.dirname, "../package.json");
@@ -35,7 +35,7 @@ export async function defineConfig(userConfig?: WebpubOptions) {
 		site: {},
 		plugins: [imgPlugin],
 		marked_options: { gfm: true, breaks: true },
-		open_browser: false,
+		open_browser: true,
 		devserver_enabled: isDev,
 		devserver_port: 3000,
 		webpub_version: packageJson.version || "0.0.1",

@@ -129,6 +129,8 @@ export function startDevServer(): void {
 				const content = await readFile(filePath);
 				const contentType = getContentType(filePath);
 
+				logger.debug(url.pathname, filePath, contentType);
+
 				if (filePath.endsWith(".html")) {
 					let html = content.toString("utf8");
 					html = injectReloadSnippet(html);
