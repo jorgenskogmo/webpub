@@ -32,3 +32,5 @@ Tracking TODOs from both webpub and webpub-starter
       if found, use that instead of main()....
 - [ ] support `npx webpub` command to run un-installed in a project
 - [ ] support `npx create webpub@latest` command to bootstrap a (sample) project
+- [ ] swap vite for esbuild
+- [ ] swap marked for micromark
