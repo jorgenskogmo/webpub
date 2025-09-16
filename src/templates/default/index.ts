@@ -1,6 +1,6 @@
-import type { RenderPage, Template, WebpubConfig } from "../../types.js";
+import type { RenderPage, Template, TemplateParams } from "../../types.js";
 
-export const head = (config: WebpubConfig, _page: RenderPage) => `<!DOCTYPE html>
+const render_head = ({ config, page, site }: TemplateParams) => `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
@@ -10,21 +10,40 @@ export const head = (config: WebpubConfig, _page: RenderPage) => `<!DOCTYPE html
       <!-- <link rel="stylesheet" href="/assets/webpub-bundle/entry.css" /> -->
       <script type="module" src="/assets/webpub-bundle/index.js"></script>
     </head>
+
+    <body>
+
+    <nav>
+      <a href="/">Home</a> |
+      ${
+				site.children
+					?.map(
+						(child) =>
+							`<a href="${child.url}">${
+								(child.page?.meta as { title?: string })?.title ?? "Untitled"
+							} (${child.url})</a>\n`,
+					)
+					.join(" | ") ?? ""
+			}
+    </nav>
+    <!-- @webpub: end-head -->
   `;
 
-export const foot = (_config: WebpubConfig, page: RenderPage) => `
+const render_footer = ({ config, page, site }: TemplateParams) => `
 
   <script>
     // show available data in the console
     const { content, ...data } = ${JSON.stringify(page)};
-    console.log("[inline] Parsed data:", data);
+    console.log("data:", data);
+    console.log("site:", ${JSON.stringify(site)});
+    console.log("config:", ${JSON.stringify(config)});
   </script>
 
   </body>
 </html>`;
 
-export const main_project = (config: WebpubConfig, page: RenderPage) => `
-<body>
+const render_project = ({ config, page, site }: TemplateParams) => `
+
   <qdi-designsystem></qdi-designsystem>
   <div class="qdi-ds-layout-fixed">
     <header>
@@ -75,27 +94,25 @@ export const main_project = (config: WebpubConfig, page: RenderPage) => `
   </div>
 `;
 
-export const main_front = (config: WebpubConfig, page: RenderPage) => `
-<body>
-    <main>
-
-    <code>Local page (${config.name} ${config.version})</code>
-    
-    <h1>This is the FRONTPAGE</h1>
-
-   <section class="content">${page.content}</section>
-
+const render_front = ({ config, page, site }: TemplateParams) => `
+  <main>
+    <code>render_front</code>
+    <section class="content">${page.content}</section>
   </main>
-  </div>
 `;
 
-export const main = (config: WebpubConfig, page: RenderPage) => `
-<body>
-    <main>
+const render_list = ({ config, page, site }: TemplateParams) => `
+  <main>
+    <code>render_list</code>
+    <section class="content">${page.content}</section>
 
-    <code>Local page (${config.name} ${config.version})</code>
-    
-    <h1>This is the DEFAULT TEMPATE</h1>
+    <ul>${list(page)}</ul>
+  </main>
+`;
+
+const render_default = ({ config, page, site }: TemplateParams) => `
+  <main>
+    <code>render_default</code>
 
     ${
 			Array.isArray(page.meta?.tags) && page.meta.tags.length > 0
@@ -104,12 +121,33 @@ export const main = (config: WebpubConfig, page: RenderPage) => `
 						.join("")}</ul>`
 				: "notags"
 		}
-    
 
+    <section class="content">${page.content}</section>
   </main>
-  </div>
 `;
 
+export const render = (input: TemplateParams) => {
+	const { config, page, site } = input;
+
+	let html = render_head(input);
+
+	if (page.url === "/./") {
+		html += render_front(input);
+	} else if (page.type === "list") {
+		html += render_list(input);
+	} else if (page.url.startsWith("/projects/")) {
+		html += render_project(input);
+	} else {
+		// default
+		html += render_default(input);
+	}
+
+	html += render_footer(input);
+
+	return html;
+};
+
+// utils, could be moved to a separate file?
 const list = (page: RenderPage) => {
 	return page.children
 		.map((child) => {
@@ -118,23 +156,4 @@ const list = (page: RenderPage) => {
 		.join("");
 };
 
-export const render = (config: WebpubConfig, page: RenderPage) => {
-	// console.log("@render:", page);
-
-	if (page.type === "list") {
-		page.content += `<ul>${list(page)}</ul>`;
-	}
-
-	if (page.url === "/./") {
-		return `${head(config, page)} ${main_front(config, page)} ${foot(config, page)}`;
-	}
-
-	if (page.url.startsWith("/projects/")) {
-		return `${head(config, page)} ${main_project(config, page)} ${foot(config, page)}`;
-	}
-
-	// default
-	return `${head(config, page)} ${main(config, page)} ${foot(config, page)}`;
-};
-
-export default { head, main, foot, render } as Template;
+export default { render } as Template;

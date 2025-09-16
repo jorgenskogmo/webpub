@@ -12,8 +12,10 @@ import {
 	type RenderPage,
 	type UrlPageMap,
 	type Template,
-	WebpubHooks,
 	type ContentStructure,
+	type TemplateParams,
+	type SimpleTreeNode,
+	WebpubHooks,
 } from "./types.js";
 import { copyDirSync } from "./utils.js";
 import { buildTree } from "./build-tree.js";
@@ -31,6 +33,10 @@ export async function build_pages(
 
 	const tree = buildTree(content);
 
+	// a copy of the tree without content
+	const simpleTree = removeContentDeep(tree);
+	console.log(simpleTree);
+
 	// (re)load rendering template
 	logger.start("+ Reloading templates");
 	logger.debug("Reloading templates from:", config.theme_directory);
@@ -39,7 +45,14 @@ export async function build_pages(
 	);
 
 	logger.start("+ Generating pages");
-	const pageData = await walkAndBuild({}, tree, null, config, theme);
+	const pageData = await walkAndBuild(
+		simpleTree,
+		{},
+		tree,
+		null,
+		config,
+		theme,
+	);
 
 	console.timeEnd(buildPagesMessage);
 	logger.success("Generated", Object.keys(pageData).length, "pages.");
@@ -152,6 +165,7 @@ async function buildBundle(config: WebpubConfig) {
 }
 
 async function walkAndBuild(
+	site: SimpleTreeNode,
 	pageData: UrlPageMap,
 	node: TreeNode,
 	parent: TreeNode | null,
@@ -200,13 +214,18 @@ async function walkAndBuild(
 	pageData[node.url] = currentPage;
 
 	// render template
-	const output = `${theme.render(config, currentPage)}`;
+	const params: TemplateParams = {
+		config,
+		page: currentPage,
+		site,
+	};
+	const output = `${theme.render(params)}`;
 	const outputPath = join(dirPath, "index.html");
 	writeFileSync(outputPath, output);
 
 	// recurse into children
 	for (const child of node.children) {
-		await walkAndBuild(pageData, child, node, config, theme);
+		await walkAndBuild(site, pageData, child, node, config, theme);
 	}
 
 	return pageData;
@@ -221,4 +240,20 @@ function toLiteNode(node: TreeNode, parent: string | null): RenderPage {
 		parent,
 		children: node.children.map((child) => toLiteNode(child, node.url)),
 	};
+}
+
+function removeContentDeep(node: SimpleTreeNode): SimpleTreeNode {
+	// make a shallow copy
+	const copy: SimpleTreeNode = { ...node };
+
+	if (copy.page && "content" in copy.page) {
+		const { content, ...rest } = copy.page;
+		copy.page = rest;
+	}
+
+	if (copy.children) {
+		copy.children = copy.children.map(removeContentDeep);
+	}
+
+	return copy;
 }

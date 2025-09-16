@@ -61,15 +61,15 @@ export type Plugin<TConfig = unknown> = {
 	configure: (opts: Partial<TConfig>) => void;
 };
 
-export type TemplateFunction = (
-	config: WebpubConfig,
-	page: RenderPage,
-) => string;
+export type TemplateParams = {
+	config: WebpubConfig;
+	page: RenderPage;
+	site: SimpleTreeNode;
+};
+
+export type TemplateFunction = (input: TemplateParams) => string;
 
 export type Template = {
-	head: TemplateFunction;
-	main: TemplateFunction;
-	foot: TemplateFunction;
 	render: TemplateFunction;
 };
 
@@ -93,6 +93,13 @@ export type TreeNode = {
 	page: Page;
 	type: "list" | "detail";
 	children: TreeNode[];
+};
+
+export type SimpleTreeNode = {
+	url: string;
+	page?: { [key: string]: Json };
+	type: string;
+	children?: SimpleTreeNode[];
 };
 
 export type RenderPage = {
