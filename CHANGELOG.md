@@ -34,3 +34,4 @@ Tracking TODOs from both webpub and webpub-starter
 - [ ] support `npx create webpub@latest` command to bootstrap a (sample) project
 - [ ] swap vite for esbuild
 - [ ] swap marked for micromark
+- [ ] remove clear funtion from package.json
