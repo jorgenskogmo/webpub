@@ -31,11 +31,11 @@ export async function build_pages(
 	const buildPagesMessage = "Generate pages";
 	console.time(buildPagesMessage);
 
+	// build tree from content structure
 	const tree = buildTree(content);
 
 	// a copy of the tree without content
 	const simpleTree = removeContentDeep(tree);
-	console.log(simpleTree);
 
 	// (re)load rendering template
 	logger.start("+ Reloading templates");
