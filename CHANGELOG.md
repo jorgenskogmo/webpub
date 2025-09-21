@@ -21,27 +21,33 @@ Tracking TODOs from both webpub and webpub-starter
 - [x] fix(webpub): consider if (the optional) vite.config.ts should live in the template dir that uses it (not root)?
       -> if a `webpub-bundle-entry.ts` file is present in the template root, it will be bundled (with Vite) and added to dist/assets
 - [x] remove clear script from package.json
+- [x] create alternative to consola
 
 ## Doing
 
 - [-] Add examples
 - [-] Add userConfig optional field to config to hold site specific vars. Will be passed to each builder.
+- [-] replace consola with custom timer
+- [-] measure 71M node_modules
+- [-] move bundler into a file of its own
 
 ## Todo
 
 - [ ] fix(data) "URL: "/./" -> "/"
+- [ ] feat(frontmatter) might specify thumbnail
 - [ ] feat(plugin:srcset+img): image_formats: ["jpeg", "webp", "avif"]
       -> only for picture-tag ?
 - [ ] feat(plugin) Make 'collection' plugin (aka tags, categories, series, etc) that supports listing pages and filtering
 - [ ] feat(plugin) Solve plugin incompat somehow (e.g. srset replaces img)
-- [ ] feat(frontmatter) might specify thumbnail
-- [ ] support `npx webpub` command to run un-installed in a project
-- [ ] support `npx create webpub@latest` command to bootstrap a (sample) project
-- [ ] swap vite for esbuild
-- [ ] swap marked for micromark
+- [ ] support `npx webpub` command to run without installation (in a project meeting requirements)
+- [ ] support `npx @dearstudio/webpub create my-app` command to bootstrap a (sample) project.
+- [ ] in build-bundle.ts: swap vite for esbuild, or maybe tsdown or rolldown?
+- [ ] consider MDX
 
 ## Wont do
 
+- [x] swap marked for micromark, Note: cant get in-md script tags through.
+- [x] support `npx create webpub@latest` command to bootstrap a (sample) project. Cant: npm does not support scoped 'create-' packages.
 - [ ] feat(template): default page template is main()
       lets follow a convention where page.url (e.g. "projects") would look for a render method
       called renderProjects(config, page) in this file

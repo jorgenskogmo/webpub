@@ -1,14 +1,9 @@
-import type { Page, TreeNode, ContentStructure } from "./types.js";
-
-import { logger } from "./logger.js";
+import type { TreeNode, ContentStructure } from "./types.js";
 
 export function buildTree(content: ContentStructure): TreeNode {
-	console.log("");
-	logger.start("+ Building tree");
-
 	const rootPage = content["/./"];
 	if (!rootPage) {
-		logger.error('Root page "/./" is missing in content');
+		console.error('Root page "/./" is missing in content');
 	}
 
 	const urls = Object.keys(content);

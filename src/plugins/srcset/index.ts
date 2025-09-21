@@ -4,6 +4,7 @@ import { basename, join } from "node:path";
 import sharp from "sharp";
 
 import { type WebpubConfig, type Plugin, WebpubHooks } from "../../types.js";
+import { timer } from "../../index.js";
 
 const PLUGIN_NAME = "webpub/srcset";
 const PLUGIN_COMPLETE_MESSAGE = `${PLUGIN_NAME} plugin complete`;
@@ -28,8 +29,9 @@ export const run = async (
 	url: string,
 	html: string,
 ): Promise<string> => {
-	// console.log(`- plugin:${PLUGIN_NAME}, processing url:`, url);
-	console.time(PLUGIN_COMPLETE_MESSAGE);
+	timer.start(PLUGIN_NAME);
+	timer.lapse(PLUGIN_NAME, `- plugin:${PLUGIN_NAME}, processing url: ${url}`);
+
 	const imgElements = html.match(IMAGE_REGEX_HTML);
 
 	let newHtml = html;
@@ -77,7 +79,7 @@ export const run = async (
 		}
 	}
 
-	console.timeEnd(PLUGIN_COMPLETE_MESSAGE);
+	timer.end(PLUGIN_NAME);
 	return newHtml;
 };
 

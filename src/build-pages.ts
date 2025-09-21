@@ -1,10 +1,10 @@
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 
 import { marked } from "marked";
-import stripAnsi from "strip-ansi";
 
-import { logger } from "./logger.js";
+import { timer } from "./utils/timer/timer.js";
+import { buildBundle } from "./build-bundle.js";
 
 import {
 	type WebpubConfig,
@@ -17,7 +17,7 @@ import {
 	type SimpleTreeNode,
 	WebpubHooks,
 } from "./types.js";
-import { copyDirSync } from "./utils.js";
+import { copyDirSync } from "./utils/copy-dir.js";
 import { buildTree } from "./build-tree.js";
 
 export async function build_pages(
@@ -28,23 +28,22 @@ export async function build_pages(
 	marked.setOptions(config.marked_options);
 
 	// start rebuild timer
-	const buildPagesMessage = "Generate pages";
-	console.time(buildPagesMessage);
+	console.log("");
+	timer.start("Generate pages");
 
 	// build tree from content structure
 	const tree = buildTree(content);
 
 	// a copy of the tree without content
 	const simpleTree = removeContentDeep(tree);
+	timer.lapse("Generate pages", "buildt tree");
 
 	// (re)load rendering template
-	logger.start("+ Reloading templates");
-	logger.debug("Reloading templates from:", config.theme_directory);
 	const theme: Template = await import(
 		join(config.theme_directory, `index.js?t=${Date.now()}`)
 	);
+	timer.lapse("Generate pages", "reloaded templates");
 
-	logger.start("+ Generating pages");
 	const pageData = await walkAndBuild(
 		simpleTree,
 		{},
@@ -53,115 +52,24 @@ export async function build_pages(
 		config,
 		theme,
 	);
-
-	console.timeEnd(buildPagesMessage);
-	logger.success("Generated", Object.keys(pageData).length, "pages.");
+	timer.end(
+		"Generate pages",
+		`generated ${Object.keys(pageData).length} pages.`,
+	);
 
 	await buildBundle(config);
 
 	// copy static assets (e.g. images, stylesheets) to the output directory
 	console.log("");
-	logger.start("+ Copying static assets");
-	logger.debug(
-		`Copied assets from ${config.content_directory}/assets to ${config.output_directory}/assets`,
-	);
-	if (logger.level > 3) console.time("Copy static assets");
+	timer.start("Copying static assets");
+	// console.debug(`Copied assets from ${config.content_directory}/assets to ${config.output_directory}/assets`);
 	copyDirSync(
 		join(config.theme_directory, "assets"),
 		join(config.output_directory, "assets"),
 	);
-	if (logger.level > 3) console.timeEnd("Copy static assets");
-	logger.success("Copy assets");
+	timer.end("Copying static assets");
 
 	return pageData;
-}
-
-async function buildBundle(config: WebpubConfig) {
-	const bundleEntryPath = resolve(
-		config.theme_directory,
-		config.webpub_bundle_filename,
-	);
-
-	logger.debug("Checking Project content for bundle entry:", bundleEntryPath);
-
-	if (existsSync(bundleEntryPath)) {
-		logger.debug("Project needs bundling. Attempting to load Vite");
-		try {
-			await import("vite");
-		} catch (error) {
-			logger.error("Error during Vite import:", error);
-		}
-
-		try {
-			const { build, defineConfig, version } = await import("vite");
-
-			console.log("");
-			console.time("Vite build");
-			logger.start(`+ Bundling with Vite v${version}`);
-
-			const viteConfig = defineConfig({
-				logLevel: "info",
-
-				customLogger: {
-					hasWarned: false,
-					info(msg, opts) {
-						if (msg.includes("built in")) {
-							const clean = stripAnsi(msg); // ✓ built in 35ms
-							const time = clean.match(/built in (\d+ms)/);
-							const timeStr = time ? time[1] : "";
-							logger.success(`Bundle built in ${timeStr}`);
-						}
-						if (msg.includes("gzip")) {
-							logger.info("+", msg.replaceAll("../", "").trim());
-						}
-						// suppress others
-					},
-					warn(msg, opts) {
-						console.warn("⚠️", msg);
-					},
-					error(msg, opts) {
-						console.error("❌", msg);
-					},
-					warnOnce(msg) {
-						console.warn("⚠️ once", msg);
-					},
-					clearScreen(type) {
-						// disable screen clearing
-					},
-					hasErrorLogged(error) {
-						return false;
-					},
-				},
-				root: config.theme_directory,
-				mode: "production",
-				base: "/",
-				build: {
-					outDir: `${config.output_directory}/assets/webpub-bundle`,
-					emptyOutDir: true,
-					minify: "esbuild",
-					rollupOptions: {
-						input: bundleEntryPath,
-						output: {
-							entryFileNames: "index.js",
-							assetFileNames: "[name].[ext]",
-						},
-					},
-				},
-			});
-
-			logger.debug(
-				"+ Starting Vite build with config:",
-				viteConfig,
-				"pwd:",
-				process.cwd(),
-			);
-
-			await build(viteConfig);
-			console.timeEnd("Vite build");
-		} catch (error) {
-			logger.error("Error during Vite build:", error);
-		}
-	}
 }
 
 async function walkAndBuild(
@@ -172,7 +80,7 @@ async function walkAndBuild(
 	config: WebpubConfig,
 	theme: Template,
 ) {
-	logger.info("- building page for URL:", node.url);
+	timer.lapse("Generate pages", `building page for URL: ${node.url}`);
 
 	// Create the directory for the current page
 	const dirPath = join(config.output_directory, node.url);
