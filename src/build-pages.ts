@@ -4,7 +4,7 @@ import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { marked } from "marked";
 
 import { timer } from "./utils/timer/timer.js";
-import { buildBundle } from "./build-bundle.js";
+import { buildBundle } from "./build-bundle-esbuild.js";
 
 import {
 	type WebpubConfig,

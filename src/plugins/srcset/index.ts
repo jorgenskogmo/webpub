@@ -29,7 +29,7 @@ export const run = async (
 	url: string,
 	html: string,
 ): Promise<string> => {
-	timer.start(PLUGIN_NAME);
+	timer.start(PLUGIN_NAME, { loglevel: 4 });
 	timer.lapse(PLUGIN_NAME, `- plugin:${PLUGIN_NAME}, processing url: ${url}`);
 
 	const imgElements = html.match(IMAGE_REGEX_HTML);

@@ -22,14 +22,14 @@ Tracking TODOs from both webpub and webpub-starter
       -> if a `webpub-bundle-entry.ts` file is present in the template root, it will be bundled (with Vite) and added to dist/assets
 - [x] remove clear script from package.json
 - [x] create alternative to consola
+- [x] move bundler into a file of its own
+- [x] replace consola with custom timer
+- [x] swap vite for esbuild (104ms -> 10ms)
 
 ## Doing
 
 - [-] Add examples
 - [-] Add userConfig optional field to config to hold site specific vars. Will be passed to each builder.
-- [-] replace consola with custom timer
-- [-] measure 71M node_modules
-- [-] move bundler into a file of its own
 
 ## Todo
 
@@ -41,13 +41,13 @@ Tracking TODOs from both webpub and webpub-starter
 - [ ] feat(plugin) Solve plugin incompat somehow (e.g. srset replaces img)
 - [ ] support `npx webpub` command to run without installation (in a project meeting requirements)
 - [ ] support `npx @dearstudio/webpub create my-app` command to bootstrap a (sample) project.
-- [ ] in build-bundle.ts: swap vite for esbuild, or maybe tsdown or rolldown?
 - [ ] consider MDX
 
 ## Wont do
 
 - [x] swap marked for micromark, Note: cant get in-md script tags through.
 - [x] support `npx create webpub@latest` command to bootstrap a (sample) project. Cant: npm does not support scoped 'create-' packages.
+- [x] reduce node_modules (71M). Vitest, Sharp and Typescript are the hogs - and we need those.
 - [ ] feat(template): default page template is main()
       lets follow a convention where page.url (e.g. "projects") would look for a render method
       called renderProjects(config, page) in this file

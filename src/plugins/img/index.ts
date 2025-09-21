@@ -34,7 +34,7 @@ export const run = async (
 	html: string,
 ): Promise<string> => {
 	// console.log(`- plugin:${PLUGIN_NAME}, processing url:`, url);
-	timer.start(PLUGIN_NAME);
+	timer.start(PLUGIN_NAME, { loglevel: 4 });
 	timer.lapse(PLUGIN_NAME, `- plugin:${PLUGIN_NAME}, processing url: ${url}`);
 
 	const imgElements = html.match(IMAGE_REGEX_HTML);
