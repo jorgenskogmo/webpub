@@ -2,9 +2,21 @@
   "name": "@dearstudio/webpub",
   "version": "0.1.68",
   "description": "website builder",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "static site generator",
+    "ssg",
+    "markdown",
+    "documentation",
+    "docs",
+    "blog"
+  ],
+  "author": "js@dearstudio.dk",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dearstudio/webpub.git"
+  },
+  "homepage": "https://github.com/dearstudio/webpub#readme",
+  "license": "AGPL-3.0-only",
   "type": "module",
   "bin": {
     "webpub": "./dist/cli.js"
