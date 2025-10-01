@@ -1,6 +1,6 @@
 {
   "name": "@dearstudio/webpub",
-  "version": "0.1.68",
+  "version": "0.1.70",
   "description": "website builder",
   "keywords": [
     "static site generator",
@@ -56,21 +56,20 @@
     "build": "tsc -p tsconfig.build.json && cp -r src/templates dist/templates",
     "prepublishOnly": "npm run build",
     "clean": "rm -rf dist",
-    "pub": "npm run clean && npm version patch && npm run build && npm pack"
+    "pub": "npm run clean && npm version patch && npm run build && npm pack",
+    "test": "vitest"
   },
   "dependencies": {
-    "consola": "^3.4.2",
     "glob": "11.0.3",
     "js-yaml": "^4.1.0",
     "marked": "^16.2.0",
     "sharp": "^0.34.3",
-    "strip-ansi": "^7.1.2",
-    "vite": "^7.1.5",
     "ws": "^8.18.3"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
     "@types/ws": "^8.18.1",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   }
 }

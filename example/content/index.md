@@ -2,9 +2,13 @@
 title: "root index"
 date: "2025-08-23"
 author: "Jane Doe"
-summary: "A sample markdown file demonstrating image handling"
+summary: "A sample markdown file"
 ---
 
-# root index 7
+# root index inline h1
 
-list root directories here
+<qdi-button variant="primary">QDI Button</qdi-button>
+
+<script>
+    console.log("alo index1");
+</script>

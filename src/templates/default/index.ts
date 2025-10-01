@@ -29,18 +29,22 @@ const render_head = ({ config, page, site }: TemplateParams) => `<!DOCTYPE html>
     <!-- @webpub: end-head -->
   `;
 
-const render_footer = ({ config, page, site }: TemplateParams) => `
+const render_footer = ({ config, page, site }: TemplateParams) => {
+	const { content, ...data } = page;
+	const dataStr = JSON.stringify(data);
 
+	return `
+  
   <script>
-    // show available data in the console
-    const { content, ...data } = ${JSON.stringify(page)};
-    console.log("data:", data);
+  // show available data in the console
+	  console.log("page*:", ${dataStr});
     console.log("site:", ${JSON.stringify(site)});
     console.log("config:", ${JSON.stringify(config)});
   </script>
 
   </body>
 </html>`;
+};
 
 const render_project = ({ config, page, site }: TemplateParams) => `
 

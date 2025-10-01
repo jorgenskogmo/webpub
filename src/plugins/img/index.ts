@@ -7,7 +7,7 @@ import {
 	type WebpubConfig,
 	type Plugin,
 	WebpubHooks,
-	logger,
+	timer,
 } from "../../index.js";
 
 const PLUGIN_NAME = "webpub/img";
@@ -34,9 +34,9 @@ export const run = async (
 	html: string,
 ): Promise<string> => {
 	// console.log(`- plugin:${PLUGIN_NAME}, processing url:`, url);
-	if (logger.level > 3)
-		logger.info(`- plugin:${PLUGIN_NAME}, processing url:`, url);
-	if (logger.level > 3) console.time(PLUGIN_COMPLETE_MESSAGE);
+	timer.start(PLUGIN_NAME, { loglevel: 4 });
+	timer.lapse(PLUGIN_NAME, `- plugin:${PLUGIN_NAME}, processing url: ${url}`);
+
 	const imgElements = html.match(IMAGE_REGEX_HTML);
 
 	let newHtml = html;
@@ -57,7 +57,7 @@ export const run = async (
 
 					// todo: consider a cache (imageOutputPath + checksum) to avoid reprocessing. For now, just use filename:
 					if (!existsSync(resizedImagePath)) {
-						logger.debug("-- creating", resizedImagePath);
+						timer.lapse(PLUGIN_NAME, `creating ${resizedImagePath}`);
 						// @see: https://sharp.pixelplumbing.com/api-resize/
 						await sharp(imageInputPath)
 							.resize(width) // width only, auto height.
@@ -74,7 +74,7 @@ export const run = async (
 		}
 	}
 
-	if (logger.level > 3) console.timeEnd(PLUGIN_COMPLETE_MESSAGE);
+	timer.end(PLUGIN_NAME);
 	return newHtml;
 };
 

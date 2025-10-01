@@ -12,8 +12,10 @@ import type {
 } from "./types.js";
 import { build_content } from "./build-content.js";
 import { build_pages } from "./build-pages.js";
-import { openBrowser } from "./utils.js";
-import { logger } from "./logger.js";
+import { openBrowser } from "./utils/open-browser.js";
+import { timer } from "./utils/timer/timer.js";
+import { P } from "vitest/dist/chunks/environment.d.cL3nLXbE.js";
+import { findAvailablePort } from "./utils/find-port.js";
 
 const sockets: Set<WebSocket> = new Set();
 
@@ -40,25 +42,18 @@ export function setConfig(_config: WebpubConfig) {
 
 export async function runBuild(): Promise<void> {
 	if (buildInProgress) {
-		logger.debug("Build already running, skipping...");
+		// console.log("Build already running, skipping...");
 		return;
 	}
 	buildInProgress = true;
 
 	try {
-		if (logger.level > 2) console.log("");
-		console.time("Complete rebuild");
-
+		timer.start("Complete rebuild");
 		const contentJson: ContentStructure = await build_content(config);
 		urlPageMap = await build_pages(config, contentJson);
 
-		if (logger.level > 2) console.log("");
-		console.timeEnd("Complete rebuild");
-		logger.success("Done");
-		if (logger.level > 2) console.log("");
-
 		if (config.devserver_enabled && config.webpub_isdev) {
-			logger.info("# Reloading clients...\n");
+			timer.lapse("Complete rebuild", "reloading clients");
 			for (const ws of sockets) {
 				try {
 					ws.send("reload");
@@ -67,8 +62,9 @@ export async function runBuild(): Promise<void> {
 				}
 			}
 		}
+		timer.end("Complete rebuild");
 	} catch (err) {
-		logger.error("# **Build failed** :", err);
+		console.error("Build failed:", err);
 	} finally {
 		buildInProgress = false;
 		buildCompletedAt = Date.now();
@@ -76,24 +72,29 @@ export async function runBuild(): Promise<void> {
 }
 
 export function startWatcher(): void {
+	timer.start("File watcher");
 	const dirs = [config.content_directory, config.theme_directory];
 	for (const dir of dirs) {
 		watch(dir, { recursive: true }, (eventType, filename) => {
 			const lapse = Date.now() - buildCompletedAt;
 			if (lapse < 50 || filename?.includes("DS_Store")) {
-				logger.debug(
+				timer.lapse(
+					"File watcher",
 					`% ${eventType}: ${filename ?? ""} -> ignored (time: ${lapse})`,
 				);
 			} else {
-				logger.debug(`% ${eventType}: ${filename ?? ""} -> rebuild`);
+				timer.lapse(
+					"File watcher",
+					`% ${eventType}: ${filename ?? ""} -> rebuild`,
+				);
 				scheduleBuild();
 			}
 		});
-		logger.start("Watching", dir);
 	}
 }
 
-export function startDevServer(): void {
+export async function startDevServer(): Promise<void> {
+	timer.start("Development server");
 	const server = createServer(async (req, res) => {
 		const url = new URL(req.url ?? "/", `http://${req.headers.host}`);
 		if (url.pathname === "/livereload") {
@@ -129,7 +130,7 @@ export function startDevServer(): void {
 				const content = await readFile(filePath);
 				const contentType = getContentType(filePath);
 
-				logger.debug(url.pathname, filePath, contentType);
+				// console.log(url.pathname, filePath, contentType);
 
 				if (filePath.endsWith(".html")) {
 					let html = content.toString("utf8");
@@ -171,12 +172,17 @@ export function startDevServer(): void {
 		}
 	});
 
+	const port = await findAvailablePort(config.devserver_port);
+
+	config.devserver_port = port;
+
 	server.listen(config.devserver_port, () => {
-		logger.info(
-			`# Dev server running at http://localhost:${config.devserver_port}`,
+		timer.lapse(
+			"Development server",
+			`running at http://localhost:${config.devserver_port}`,
 		);
 		if (config.open_browser) {
-			logger.info("# Opening browser...");
+			timer.lapse("Development server", "opening browser...");
 			openBrowser(`http://localhost:${config.devserver_port}`);
 		}
 	});
